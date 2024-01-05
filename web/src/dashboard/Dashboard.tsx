@@ -136,7 +136,8 @@ const defaultTheme = createTheme({
 export default function Dashboard() {
 
   ///const apiUrl = 'http://192.168.1.74:5000';
-  const apiUrl = 'http://10.0.0.101:5000'; 
+  const apiUrl = 'http://127.0.0.1:5000'; 
+
   const [processedImage, setProcessedImage] = useState('');  
   const [originalImage, setOriginalImage] = useState('');
   const [imageWidth, setImageWidth] = useState(0);

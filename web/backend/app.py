@@ -1,9 +1,6 @@
 import os 
-import cv2  
-import base64
-import json
-import traceback
-from io import BytesIO
+import cv2   
+import traceback 
 
 import numpy as np 
 from flask import request, Flask, Response, send_file
@@ -109,5 +106,5 @@ def get_data():
     return Response(processed_image.tobytes(), mimetype='image/jpeg')
 
 if __name__ == '__main__': 
-    app.run(host='0.0.0.0', port=5000) 
+    app.run() 
     #aapp.run(debug=True)

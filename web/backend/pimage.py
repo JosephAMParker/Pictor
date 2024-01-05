@@ -6,8 +6,7 @@ import math
 import random
 import cv2
 import imutils 
-from matplotlib.path import Path 
-import matplotlib.pyplot as plt
+from matplotlib.path import Path  
 
 import time
 
