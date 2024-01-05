@@ -4,7 +4,7 @@ import traceback
 
 import numpy as np 
 from flask import request, Flask, Response, send_file
-from flask_cors import CORS 
+from flask_cors import CORS, cross_origin 
 
 from pimage import PImage
 from pvideo import PVideo
@@ -46,6 +46,7 @@ def send_processed_video(video_path):
     return send_file(video_path, as_attachment=True, download_name='processed_video.mp4', mimetype='video/mp4') 
  
 @app.route('/api/process-image', methods=['POST'])
+@cross_origin()
 def process_image():
     
     if 'imageFile' not in request.files:
