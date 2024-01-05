@@ -84,13 +84,12 @@ class PImage:
         sort_array = cls.create_sort_array(frame_region, value_mat)
 
         edges = None
-        match cls.interval_type:
-            case "threshold": 
-                start_of_span_indices, end_of_span_indices = cls.create_span_indices(sort_array) 
-            case "random": 
-                start_of_span_indices, end_of_span_indices = cls.create_random_span_indices(frame_region.shape[0], frame_region.shape[1])  
-            case 'edge':
-                edges, start_of_span_indices, end_of_span_indices = cls.create_edge_span_indices(frame_region) 
+        if cls.interval_type == "threshold": 
+            start_of_span_indices, end_of_span_indices = cls.create_span_indices(sort_array) 
+        elif cls.interval_type == "random":
+            start_of_span_indices, end_of_span_indices = cls.create_random_span_indices(frame_region.shape[0], frame_region.shape[1])  
+        elif cls.interval_type == "edge":
+            edges, start_of_span_indices, end_of_span_indices = cls.create_edge_span_indices(frame_region)  
 
         if edges is not None and cls.show_edges: 
             return  ys, yf, edges 
@@ -621,15 +620,14 @@ class PImage:
     
     @classmethod
     def get_path_function(cls, path_type):
-        match path_type:
-            case 'line':
-                return 'line'
-            case 'sine':
-                return cls.sin 
-            case 'curve':
-                return cls.arc  
-            case 'circle':
-                return cls.circle  
+        if path_type == 'line':
+            return 'line'
+        if path_type == 'sine':
+            return cls.sin 
+        if path_type == 'curve':
+            return cls.arc  
+        if path_type == 'circle':
+            return cls.circle 
      
     @classmethod
     def process_frame(cls, frame, img_filter, low, high, direction, inFilter, blend, bleed, interval_type, path_type, path_amp, path_x, path_freq, starburst=None, show_edges=None):    
