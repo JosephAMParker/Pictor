@@ -47,23 +47,24 @@ class PImage:
         return 0.299 * pixel_value[0] + 0.587 * pixel_value[1] + 0.114 * pixel_value[2] 
 
     @classmethod
-    def get_value_matrix(cls): 
+    def get_value_matrix(cls):
+        return [0.299, 0.587, 0.114, 1] 
 
-        cls.sort_type = "Brightness"
+        # cls.sort_type = "Brightness"
 
-        match cls.sort_type:
-            case "Brightness":
-                return [0.299, 0.587, 0.114, 1] 
-            case "Hue":
-                return [1,0,0]
-            case "Lightness":
-                return [0,1,0]
-            case "Red":
-                return [1,0,0,0]
-            case "Green":
-                return [0,1,0,0]
-            case "Blue":
-                return [0,0,1,0] 
+        # match cls.sort_type:
+        #     case "Brightness":
+        #         return [0.299, 0.587, 0.114, 1] 
+        #     case "Hue":
+        #         return [1,0,0]
+        #     case "Lightness":
+        #         return [0,1,0]
+        #     case "Red":
+        #         return [1,0,0,0]
+        #     case "Green":
+        #         return [0,1,0,0]
+        #     case "Blue":
+        #         return [0,0,1,0] 
             
     @classmethod
     def process_rows_old(cls, ys, yf): 
