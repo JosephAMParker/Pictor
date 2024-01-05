@@ -137,7 +137,7 @@ export default function Dashboard() {
 
   //const apiUrl = 'http://192.168.1.74:5000';
   //const apiUrl = 'http://127.0.0.1:5000'; 
-  const apiUrl = 'http://ec2-54-242-219-119.compute-1.amazonaws.com';
+  const apiUrl = 'https://ec2-54-242-219-119.compute-1.amazonaws.com';
 
   const [processedImage, setProcessedImage] = useState('');  
   const [originalImage, setOriginalImage] = useState('');
