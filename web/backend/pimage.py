@@ -480,56 +480,17 @@ class PImage:
     def process_star(cls, point):  
 
         frame = cls.frame
-        allstamp = np.zeros_like(frame)  
-        increment = int(360 // (os.cpu_count() - 1))  
-        angle_starts, angle_ends = [], []
-        cls.star_point = point   
-
-        if not USE_CONCURRENT:
-            allstamp[...] = cls.process_section(0, 361)
-        else:
-            with concurrent.futures.ProcessPoolExecutor() as executor: 
-
-                for i in range(0, 361, increment): 
-                    ys = i
-                    yf = i + increment 
-                    
-                    angle_starts.append(ys)
-                    angle_ends.append(yf)  
-                    
-                for result in executor.map(cls.process_section, angle_starts, angle_ends): 
-                    section = result 
-                    allstamp[...] = np.where(section[:, :, 3][:, :, None] > 200, section, allstamp)
-                    
+        allstamp = np.zeros_like(frame)   
+        cls.star_point = point    
+        allstamp[...] = cls.process_section(0, 361)
+        
         return allstamp
     
     @classmethod
     def process_direction(cls):
-        frame, height = cls.frame, cls.height
-        increment = int(height / (os.cpu_count() - 1))  
-        yStarts, yFinishs = [], [] 
-        
-        stamp = np.zeros_like(frame) 
-        #stamp = cls.process_rows(0, height)
-        if not USE_CONCURRENT:
-            _, _, stamp = cls.process_rows(frame, 0, height)
-        else:
-            with concurrent.futures.ProcessPoolExecutor() as executor: 
-
-                for i in range(0, height, increment): 
-                    ys = i
-                    yf = min(height, i + increment) 
-                    
-                    yStarts.append(ys)
-                    yFinishs.append(yf) 
-                    
-                for result in executor.map(cls.process_rows_old, yStarts, yFinishs):
-                    
-                    ys = result[0]
-                    yf = result[1]
-                    section = result[2] 
-                    stamp[ys:yf, :] = section 
-                     
+        frame, height = cls.frame, cls.height  
+        stamp = np.zeros_like(frame)  
+        _, _, stamp = cls.process_rows(frame, 0, height)    
         return stamp
 
     @classmethod
