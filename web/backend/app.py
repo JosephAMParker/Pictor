@@ -15,7 +15,7 @@ app = Flask(__name__)
 #CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 cors = CORS(app)
-cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
+#cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
 
 # Define a route for the root path
 @app.route('/')
@@ -45,8 +45,7 @@ def send_processed_video(video_path):
     
     return send_file(video_path, as_attachment=True, download_name='processed_video.mp4', mimetype='video/mp4') 
  
-@app.route('/api/process-image', methods=['POST'])
-@cross_origin()
+@app.route('/api/process-image', methods=['POST']) 
 def process_image():
     
     if 'imageFile' not in request.files:
