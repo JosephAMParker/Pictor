@@ -14,7 +14,7 @@ app = Flask(__name__)
 #CORS(app, resources={r"/api/*": {"origins": "http://192.168.1.74:3000/"}})
 #CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-cors = CORS(app)
+CORS(app)
 #cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
 
 # Define a route for the root path
