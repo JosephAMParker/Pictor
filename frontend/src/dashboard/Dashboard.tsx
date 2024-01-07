@@ -244,8 +244,8 @@ export default function Dashboard() {
       return
     }
 
-    if (false && file.size > 900) {
-      try {
+  if (file.size > 1024*1024) {
+    try {
         console.log("hulla")
         const resizedBlob = await resizeImage(file);
         const resizedImageUrl = URL.createObjectURL(resizedBlob);
