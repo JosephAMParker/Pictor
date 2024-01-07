@@ -1,0 +1,32 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+node_modules/
+
+# Optional: User-specific files
+.npmrc
+.npm/
+yarn-error.log
+
+# Optional: Mac OS
+.DS_Store
+
+# Optional: Windows
+Thumbs.db
+desktop.ini
+
+# Optional: JetBrains IDE
+.idea/
+
+# Optional: Visual Studio Code
+.vscode/
+
