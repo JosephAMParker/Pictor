@@ -6,7 +6,7 @@ import math
 import random
 import cv2
 import imutils 
-from matplotlib.path import Path  
+from matplotlib.path import Path   
 
 import time
 
@@ -414,7 +414,7 @@ class PImage:
     @classmethod
     def process_section(cls, angle_s, angle_f):
 
-        frame, img_filter, point = cls.frame, cls.img_filter, cls.star_point
+        frame, point = cls.frame, cls.star_point
         stamp = np.zeros_like(frame)  
         
 
@@ -435,10 +435,9 @@ class PImage:
             
             Mr = cls.get_rotation_mat(angle, point)
             Mt = cls.get_translation_mat(d_x, d_y)
-            M  = cls.chain_affine_transformation_mats(Mr, Mt)
-            transformed_filter = cv2.warpAffine(img_filter, M, (w, h))
+            M  = cls.chain_affine_transformation_mats(Mr, Mt) 
             transformed_frame  = cv2.warpAffine(frame, M, (w, h))  # Apply affine transformation with the chained (unified) matrix M. 
-            w, h = (transformed_filter.shape[1], transformed_filter.shape[0])
+            w, h = (transformed_frame.shape[1], transformed_frame.shape[0])
 
             # transformed_frame = cls.shift_image_y(transformed_frame, cls.fc, 1)
             hlf_num_rows = 66
@@ -486,7 +485,7 @@ class PImage:
         
         return allstamp
     
-    @classmethod
+    @classmethod 
     def process_direction(cls):
         frame, height = cls.frame, cls.height  
         stamp = np.zeros_like(frame)  
@@ -526,15 +525,42 @@ class PImage:
     def rotate_back(cls, stamp, rotate_angle, org_height, org_width):
         
         stamp = imutils.rotate_bound(stamp, -rotate_angle) 
-        height, width, _ = stamp.shape 
-        if rotate_angle != 0 or rotate_angle != 90 or rotate_angle != 180 or rotate_angle != 270:
-            stamp = stamp[int((height - org_height) / 2) : int((height + org_height) / 2),
-                                            int((width - org_width) / 2): int((width + org_width) / 2)] 
+        height, width, _ = stamp.shape  
+        return stamp[int((height - org_height) / 2) : int((height + org_height) / 2),
+                     int((width  - org_width)  / 2) : int((width  + org_width)  / 2)]  
+    
+    @classmethod 
+    def rotate_back2(cls, stamp, rotate_angle, org_height, org_width):
 
-        return stamp
+        # stamp = imutils.rotate_bound(stamp, -rotate_angle) 
+
+        # grab the dimensions of the image and then determine the
+        # center
+        (h, w) = stamp.shape[:2]
+        (cX, cY) = (w / 2, h / 2)
+
+        # grab the rotation matrix (applying the negative of the
+        # angle to rotate clockwise), then grab the sine and cosine
+        # (i.e., the rotation components of the matrix)
+        M = cv2.getRotationMatrix2D((cX, cY), rotate_angle, 1.0)
+        cos = np.abs(M[0, 0])
+        sin = np.abs(M[0, 1])
+
+        # compute the new bounding dimensions of the image
+        width = int((h * sin) + (w * cos))
+        height = int((h * cos) + (w * sin))
+
+        # adjust the rotation matrix to take into account translation
+        M[0, 2] += (width / 2) - cX
+        M[1, 2] += (height / 2) - cY
+
+        # perform the actual rotation and return the image
+        return cv2.warpAffine(stamp, M, (width, height))[int((height - org_height) / 2) : int((height + org_height) / 2),
+                                                         int((width  - org_width) / 2)  : int((width  + org_width)  / 2)]
+ 
     
     @classmethod
-    def shift_image_y(cls, image, f, const):
+    def shift_image_y2(cls, image, f, const):
         h, w, _ = image.shape
         shifted_image = np.zeros_like(image)
 
@@ -544,6 +570,17 @@ class PImage:
             shifted_image[:, x, :] = shifted_column
 
         return shifted_image
+    
+    @classmethod
+    def shift_image_y(cls, image, f, const):
+        h, w, _ = image.shape
+
+        for x in range(w):
+            shift_amount = int(f(x)) * const
+            # Use np.roll in place by assigning directly to the original array
+            image[:, x, :] = np.roll(image[:, x, :], shift_amount, axis=0)
+
+        return image
     
     @classmethod
     def shift_rotate(cls, image, const):
@@ -589,8 +626,8 @@ class PImage:
             return cls.arc  
         if path_type == 'circle':
             return cls.circle 
-     
-    @classmethod
+      
+    @classmethod  
     def process_frame(cls, frame, img_filter, low, high, direction, inFilter, blend, bleed, interval_type, path_type, path_amp, path_x, path_freq, starburst=None, show_edges=None):    
         
 
@@ -600,8 +637,10 @@ class PImage:
         org_height, org_width, _ = frame.shape 
         if (direction > 90 and direction < 180) or (direction > 270 and direction < 360):
             flip_image = True
-            frame = cv2.flip(frame, 1)
-            img_filter = cv2.flip(img_filter, 1)
+            frame = np.fliplr(frame)
+            img_filter = np.fliplr(img_filter)
+            # frame = cv2.flip(frame, 1)
+            # img_filter = cv2.flip(img_filter, 1)
             direction = 360 - direction
             if starburst:
                 starburst[0] = org_width - starburst[0]
@@ -631,18 +670,15 @@ class PImage:
 
         original_frame = np.copy(frame)  
         if inFilter:
-            alpha_channel = img_filter[:, :, 3] / 255.0
-            img_filter[alpha_channel == 0, :3] = [255, 255, 255] 
-            img_filter[alpha_channel == 1, :3] = [0, 0, 0] 
-            img_filter[:, :, 3] = 255 * (1 - alpha_channel)
-        if blend: 
-            img_filter = cv2.blur(img_filter, (blur_constant, blur_constant))
-
-        alpha_channel = img_filter[:, :, 3] / 255.0 
-        original_alpha_channel = img_filter[:, :, 3] / 255.0
+            # alpha_channel = img_filter[:, :, 3] / 255.0
+            img_filter[img_filter[:, :, 3] == 0, :3] = [255, 255, 255] 
+            img_filter[img_filter[:, :, 3] == 255, :3] = [0, 0, 0] 
+            img_filter[:, :, 3] =  (255 - img_filter[:, :, 3]) 
+        # alpha_channel = img_filter[:, :, 3] / 255.0 
+        # original_alpha_channel = img_filter[:, :, 3] / 255.0
         if not starburst:
             frame = imutils.rotate_bound(frame, rotate_angle)
-            img_filter = imutils.rotate_bound(img_filter, rotate_angle) 
+            # img_filter = imutils.rotate_bound(img_filter, rotate_angle) 
 
         # cv2.namedWindow("f", cv2.WINDOW_NORMAL)
         # cv2.imshow('f', frame)
@@ -672,8 +708,8 @@ class PImage:
                 
         else:
             cls.frame = frame
-        cls.alpha_channel = alpha_channel 
-        cls.img_filter = img_filter  
+        # cls.alpha_channel = alpha_channel 
+        # cls.img_filter = img_filter  
         cls.inFilter = inFilter 
         cls.low = low + 255
         cls.high = high + 255
@@ -694,7 +730,7 @@ class PImage:
                 
                 stamp = cls.shift_image_y(stamp, cls.path_fn, -1)
                 # stamp = cls.shift_rotate(stamp, -1) 
-            stamp = cls.rotate_back(stamp, rotate_angle, org_height, org_width)   
+            stamp = cls.rotate_back2(stamp, rotate_angle, org_height, org_width)   
 
         if cls.show_edges: 
             dimmed_frame = original_frame * 0.65
@@ -702,15 +738,37 @@ class PImage:
             blended_image = cv2.addWeighted(dimmed_frame, 1, stamp, 0.9, 0, dtype=cv2.CV_8U)
             return blended_image 
 
+        # blend_constant = 0
+        # alpha_channel = original_alpha_channel
+        # blended_region = (stamp * (alpha_channel[:, :, np.newaxis] - blend_constant)) + (original_frame * ((1 - blend_constant) - alpha_channel[:, :, np.newaxis])) 
+        # out_frame = np.where(blended_region[:, :, 3][:, :, None] > 250, blended_region, original_frame).astype(np.uint8)
         blend_constant = 0
-        alpha_channel = original_alpha_channel
-        blended_region = (stamp * (alpha_channel[:, :, np.newaxis] - blend_constant)) + (original_frame * ((1 - blend_constant) - alpha_channel[:, :, np.newaxis])) 
-        out_frame = np.where(blended_region[:, :, 3][:, :, None] > 250, blended_region, original_frame).astype(np.uint8)
-        
+        # alpha_channel = original_alpha_channel
+        alpha_channel = None
+        if blend: 
+            img_filter = cv2.blur(img_filter, (blur_constant, blur_constant))
+            alpha_channel = (img_filter[:, :, 3] / 255.0)
+        else:
+            alpha_channel = (img_filter[:, :, 3] / 255.0)
+        out_frame = None
+        # blended_region = ((stamp * (alpha_channel[:, :, np.newaxis] - blend_constant)) + (original_frame * ((1 - blend_constant) - alpha_channel[:, :, np.newaxis])))
+        if flip_image:
+            out_frame = np.where(((stamp * ((img_filter[:, :, 3] / 255.0)[:, :, np.newaxis])) + (original_frame * (1 - alpha_channel[:, :, np.newaxis])))[:, :, 3][:, :, None] > 250, ((stamp * (alpha_channel[:, :, np.newaxis])) + (original_frame * (1 - alpha_channel[:, :, np.newaxis]))), original_frame).astype(np.uint8)
+        else:
+            out_frame = np.where(((stamp * (alpha_channel[:, :, np.newaxis])) + (original_frame * (1 - alpha_channel[:, :, np.newaxis])))[:, :, 3][:, :, None] > 250, ((stamp * (alpha_channel[:, :, np.newaxis])) + (original_frame * (1 - alpha_channel[:, :, np.newaxis]))), original_frame).astype(np.uint8)
+
         end = time.time() 
         print(f'total time: {end - start}')
-
+        cls.clear_class()
         if flip_image: 
             # return out_frame
-            return cv2.flip(out_frame, 1) 
+            return np.fliplr(out_frame)
         return out_frame   
+    
+    @classmethod
+    def get_alpha_channel(cls, img_filter):
+        return img_filter[:, :, 3] / 255.0
+    
+    @classmethod 
+    def clear_class(cls):
+        del cls.frame 
