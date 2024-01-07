@@ -245,8 +245,7 @@ export default function Dashboard() {
     }
 
   if (file.size > 1024*1024) {
-    try {
-        console.log("hulla")
+    try { 
         const resizedBlob = await resizeImage(file);
         const resizedImageUrl = URL.createObjectURL(resizedBlob);
         handleSetImage(resizedImageUrl);
@@ -259,12 +258,42 @@ export default function Dashboard() {
     }
   };
 
-  const resizeImage = (file : any) : any => {
+  const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
     return new Promise((resolve, reject) => {
+      const img = new Image();
+  
+      img.onload = () => {
+        resolve({
+          width: img.width,
+          height: img.height,
+        });
+      };
+  
+      img.onerror = (error) => {
+        reject(error);
+      };
+  
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const resizeImage = (file : any) : any => {
+    return new Promise(async (resolve, reject) => {
+      const targetFileSize = 1024 * 1024; // 1MB
+
+      const { width, height } = await getImageDimensions(file);
+
+      // Calculate the proportional resize factor based on the target file size
+      const resizeFactor = file.size / targetFileSize
+      
+      // Calculate the new width and height
+      const newWidth = Math.round(width / resizeFactor);
+      const newHeight = Math.round(height / resizeFactor);
+      console.log(resizeFactor, newWidth, newHeight)
       Resizer.imageFileResizer(
         file,
-        1000,  // New width
-        1000 * (file.height / file.width),  // Calculate new height to maintain aspect ratio
+        newWidth,  // New width
+        newHeight,
         'JPEG',  // Output format (JPEG, PNG, WEBP, etc.)
         100,  // Image quality (0 to 100)
         0,    // Rotation in degrees
@@ -522,6 +551,7 @@ export default function Dashboard() {
                 xPos={pathX}
                 rotationAngle={sortDirection}
                 showGraph={showGraph} 
+                
               />  
           </Box> 
           <Copyright sx={{ pt: 4 }} />
