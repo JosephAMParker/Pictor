@@ -133,11 +133,10 @@ const defaultTheme = createTheme({
   },
 });
 
-export default function Dashboard() {
-
-  //const apiUrl = 'http://192.168.1.74:5000';
+export default function Dashboard() { 
   //const apiUrl = 'http://127.0.0.1:5000'; 
-  const apiUrl = 'https://ec2-54-242-219-119.compute-1.amazonaws.com';
+  // const apiUrl = 'https://ec2-54-242-219-119.compute-1.amazonaws.com';
+  const apiUrl = "https://joseph-parker.ca"
 
   const [processedImage, setProcessedImage] = useState('');  
   const [originalImage, setOriginalImage] = useState('');
@@ -246,7 +245,7 @@ export default function Dashboard() {
       return
     }
 
-    if (file.size > 900) {
+    if (file.size > 1024*1024*(0.7)) {
       try {
         console.log("hulla")
         const resizedBlob = await resizeImage(file);
