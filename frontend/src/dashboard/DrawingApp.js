@@ -114,9 +114,9 @@ const DrawingApp = (props) => {
         const drawArc = (e) => {
             
             
-            if(!useMask){
+            if(!(useMask || drawMode ==='star')){
                 return
-            }
+            } 
 
             const doDraw = (draw, erase, offsetX, offsetY, radius) => {
                 draw.globalCompositeOperation = 'destination-out';

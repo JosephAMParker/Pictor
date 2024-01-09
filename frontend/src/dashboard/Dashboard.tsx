@@ -132,10 +132,11 @@ const defaultTheme = createTheme({
     mode: 'dark',
   },
 });
-
+const MAX_PIXEL_SIZE = 2500*2500
 export default function Dashboard() { 
   // const apiUrl = 'http://127.0.0.1:5000';  
   const apiUrl = 'https://www.joseph-parker.ca';
+  
   
   const [processedImage, setProcessedImage] = useState('');  
   const [originalImage, setOriginalImage] = useState('');
@@ -244,14 +245,15 @@ export default function Dashboard() {
       return
     }
 
-  if (file.size > 1024*1024) {
-    try { 
-        const resizedBlob = await resizeImage(file);
-        const resizedImageUrl = URL.createObjectURL(resizedBlob);
-        handleSetImage(resizedImageUrl);
-      } catch (error) {
-        console.error('Error resizing image:', error);
-      }
+    const { width, height } = await getImageDimensions(file);
+    if(width * height > MAX_PIXEL_SIZE) {
+      try { 
+          const resizedBlob = await resizeImage(file, width, height);
+          const resizedImageUrl = URL.createObjectURL(resizedBlob);
+          handleSetImage(resizedImageUrl);
+        } catch (error) {
+          console.error('Error resizing image:', error);
+        }
     } else {
         const fileUrl = URL.createObjectURL(file);
         handleSetImage(fileUrl);
@@ -277,19 +279,17 @@ export default function Dashboard() {
     });
   };
 
-  const resizeImage = (file : any) : any => {
+  const resizeImage = (file : any, width: number, height: number) : any => {
     return new Promise(async (resolve, reject) => {
-      const targetFileSize = 1024 * 1024; // 1MB
-
-      const { width, height } = await getImageDimensions(file);
+      const targetFileSize = MAX_PIXEL_SIZE; // pixel size 
 
       // Calculate the proportional resize factor based on the target file size
-      const resizeFactor = file.size / targetFileSize
+      const resizeFactor = Math.sqrt(width * height / targetFileSize)
       
       // Calculate the new width and height
       const newWidth = Math.round(width / resizeFactor);
       const newHeight = Math.round(height / resizeFactor);
-      console.log(resizeFactor, newWidth, newHeight)
+      
       Resizer.imageFileResizer(
         file,
         newWidth,  // New width

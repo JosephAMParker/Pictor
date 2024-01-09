@@ -6,7 +6,7 @@ import math
 import random
 import cv2
 import imutils 
-from matplotlib.path import Path   
+from matplotlib.path import Path    
 
 import time
 
@@ -47,31 +47,24 @@ class PImage:
         return 0.299 * pixel_value[0] + 0.587 * pixel_value[1] + 0.114 * pixel_value[2] 
 
     @classmethod
-    def get_value_matrix(cls):
-        return [0.299, 0.587, 0.114, 1] 
-
-        # cls.sort_type = "Brightness"
-
-        # match cls.sort_type:
-        #     case "Brightness":
-        #         return [0.299, 0.587, 0.114, 1] 
-        #     case "Hue":
-        #         return [1,0,0]
-        #     case "Lightness":
-        #         return [0,1,0]
-        #     case "Red":
-        #         return [1,0,0,0]
-        #     case "Green":
-        #         return [0,1,0,0]
-        #     case "Blue":
-        #         return [0,0,1,0] 
+    def get_value_matrix(cls):  
+        if cls.sort_type == "Brightness":
+            return [30, 59, 11, 100] 
+        if cls.sort_type == "Red":
+            return [100, 0, 0, 100] 
+        if cls.sort_type == "Green":
+            return [0, 100, 0, 100] 
+        if cls.sort_type == "Blue":
+            return [0, 0, 100, 100]
+        if cls.sort_type == "Hue":
+            return [1,0,0]  
             
     @classmethod
     def process_rows_old(cls, ys, yf): 
         frame, img_filter, width, alpha_channel = cls.frame, cls.img_filter, cls.width, cls.alpha_channel
         return cls._process_rows(ys, yf, frame, img_filter, alpha_channel, width, 0) 
     
-    @classmethod
+    @classmethod 
     def process_rows(cls, frame, ys, yf):   
         value_mat = cls.get_value_matrix() 
 
@@ -81,7 +74,7 @@ class PImage:
         else:
             frame_region = frame[ys:yf, :]
 
-        sort_array = cls.create_sort_array(frame_region, value_mat)
+        sort_array = cls.create_sort_array(frame_region, value_mat).astype(np.uint16)
 
         edges = None
         if cls.interval_type == "threshold": 
@@ -418,7 +411,7 @@ class PImage:
         stamp = np.zeros_like(frame)  
         
 
-        arc_size = 6
+        arc_size = 3
         for angle in range(angle_s, angle_f, arc_size):   
 
             # print(f"section {angle}, {angle + arc_size}")
@@ -440,7 +433,7 @@ class PImage:
             w, h = (transformed_frame.shape[1], transformed_frame.shape[0])
 
             # transformed_frame = cls.shift_image_y(transformed_frame, cls.fc, 1)
-            hlf_num_rows = 66
+            hlf_num_rows = 60
             _, _, rows = cls.process_rows(transformed_frame, h//2 - hlf_num_rows, h//2 + hlf_num_rows) 
             rows = cls.trim_rows(rows, 1400)
 
@@ -627,7 +620,7 @@ class PImage:
         if path_type == 'circle':
             return cls.circle 
       
-    @classmethod  
+    @classmethod   
     def process_frame(cls, frame, img_filter, low, high, direction, inFilter, blend, bleed, interval_type, path_type, path_amp, path_x, path_freq, starburst=None, show_edges=None):    
         
 
@@ -711,8 +704,8 @@ class PImage:
         # cls.alpha_channel = alpha_channel 
         # cls.img_filter = img_filter  
         cls.inFilter = inFilter 
-        cls.low = low + 255
-        cls.high = high + 255
+        cls.low = (low + 255) * 100
+        cls.high = (high + 255) * 100
         cls.min_span = 1
         cls.progess = 0
         cls.sort_type = "Brightness"

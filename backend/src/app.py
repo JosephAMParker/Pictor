@@ -108,6 +108,8 @@ def get_data():
     _, processed_image = cv2.imencode('.jpg', original_image) 
     return Response(processed_image.tobytes(), mimetype='image/jpeg')
 
-if __name__ == '__main__': 
+def main():  
     app.run() 
-    #aapp.run(debug=True)
+
+if __name__ == '__main__': 
+    main() 
