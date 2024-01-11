@@ -254,6 +254,12 @@ export default function Dashboard(props:DashboardProps) {
       return
     }
 
+    // Check if the file type is an image
+    if (!file.type.startsWith('image/')) {
+      console.error('Selected file is not an image.'); 
+      return;
+    }
+
     const { width, height } = await getImageDimensions(file);
     if(width * height > MAX_PIXEL_SIZE) {
       try { 
