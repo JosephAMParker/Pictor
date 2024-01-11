@@ -2,9 +2,8 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import * as React from 'react';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'; 
+import ListItemIcon from '@mui/material/ListItemIcon'; 
+import DensityMediumIcon from '@mui/icons-material/DensityMedium';
 import EditIcon from '@mui/icons-material/Edit';  
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -190,55 +189,11 @@ export default function DashboardList(props:DashboardListProps){
                         /> 
                     </ListItem>  
                 </List>
-            </Collapse> 
+            </Collapse>  
 
-            <ListItemButton onClick={() => {setOpenStar(!openStar)}}
-                selected={useStar}
-                > 
-                <ListItemIcon> 
-                     {!useStar && <StarBorder />}
-                     {useStar && <Star />}
-                </ListItemIcon>
-                <ListItemText primary={"Star"} />
-                {openStar ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-
-            <Collapse in={openStar} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-
-                    <ListItemButton 
-                        onClick={() => 
-                           {setUseStar(!useStar)
-                            setDrawMode('draw')}
-                        } 
-                        sx={{ pl: 4 }}>
-                        <ListItemIcon> 
-                            {!useStar && <CheckBoxOutlineBlankIcon />}
-                            {useStar && <CheckBoxIcon />}
-                        </ListItemIcon>
-                        <ListItemText primary="Use Star" />
-                    </ListItemButton>
-
-                    <ListItemButton 
-                        disabled={!useStar}
-                        sx={{ pl: 4 }} 
-                        selected={drawMode==='star'}
-                        onClick={() => {
-                            setDrawMode('star')
-                        }}
-                        > 
-                        <ListItemIcon>
-                            <Star/>
-                        </ListItemIcon>
-                        <ListItemText primary="Place Star Center" />
-                    </ListItemButton>
-
-                </List>
-            </Collapse> 
-           
             <ListItemButton onClick={() => {setOpenInterval(!openInterval)}}>
                 <ListItemIcon> 
-                    <SortIcon /> 
+                    <DensityMediumIcon /> 
                 </ListItemIcon>
                 <ListItemText 
                 sx={{textTransform: 'capitalize'}}
@@ -418,6 +373,50 @@ export default function DashboardList(props:DashboardListProps){
                             /> 
                         </ListItem>
                     }
+
+                </List>
+            </Collapse>
+
+            <ListItemButton onClick={() => {setOpenStar(!openStar)}}
+                selected={useStar}
+                > 
+                <ListItemIcon> 
+                     {!useStar && <StarBorder />}
+                     {useStar && <Star />}
+                </ListItemIcon>
+                <ListItemText primary={"Star"} />
+                {openStar ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+
+            <Collapse in={openStar} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+
+                    <ListItemButton 
+                        onClick={() => 
+                           {setUseStar(!useStar)
+                            setDrawMode('draw')}
+                        } 
+                        sx={{ pl: 4 }}>
+                        <ListItemIcon> 
+                            {!useStar && <CheckBoxOutlineBlankIcon />}
+                            {useStar && <CheckBoxIcon />}
+                        </ListItemIcon>
+                        <ListItemText primary="Use Star" />
+                    </ListItemButton>
+
+                    <ListItemButton 
+                        disabled={!useStar}
+                        sx={{ pl: 4 }} 
+                        selected={drawMode==='star'}
+                        onClick={() => {
+                            setDrawMode('star')
+                        }}
+                        > 
+                        <ListItemIcon>
+                            <Star/>
+                        </ListItemIcon>
+                        <ListItemText primary="Place Star Center" />
+                    </ListItemButton>
 
                 </List>
             </Collapse>

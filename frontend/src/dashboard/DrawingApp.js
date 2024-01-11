@@ -52,6 +52,8 @@ const DrawingApp = (props) => {
         starCanvas.width  = width;
         starCanvas.height = height; 
 
+        drawStar(0,0)
+
         setInitialized(true);
     }
     
@@ -95,6 +97,30 @@ const DrawingApp = (props) => {
         }   
         
     },[originalImage, width, height]) 
+
+    const drawStar = (offsetX, offsetY) => {
+        const starCanvas = starBurstRef.current;
+        const starContext = starCanvas.getContext('2d');
+
+        starContext.clearRect(0, 0, starCanvas.width, starCanvas.height);
+        const radius = starCanvas.width / 500
+        starContext.beginPath();
+        starContext.arc(offsetX, offsetY, 8 * radius, 0, 2 * Math.PI);
+        starContext.fillStyle = 'rgba(222, 33, 22, 0.4)';
+        starContext.fill(); 
+
+        starContext.beginPath();
+        starContext.arc(offsetX, offsetY, 5 * radius, 0, 2 * Math.PI);
+        starContext.fillStyle = 'rgba(44, 43, 234, 0.7)';
+        starContext.fill(); 
+
+        starContext.beginPath();
+        starContext.arc(offsetX, offsetY, 2 * radius, 0, 2 * Math.PI);
+        starContext.fillStyle = 'rgba(44, 222, 22)';
+        starContext.fill(); 
+
+        setStarPoint([offsetX, offsetY]) 
+    }
     
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -111,8 +137,7 @@ const DrawingApp = (props) => {
         
         const rect = canvas.getBoundingClientRect();
       
-        const drawArc = (e) => {
-            
+        const drawArc = (e) => { 
             
             if(!(useMask || drawMode ==='star')){
                 return
@@ -158,27 +183,7 @@ const DrawingApp = (props) => {
                 doDraw(outContext, inContext, offsetX, offsetY, radius);
 
             } else if(drawMode === 'star') {
-                const starCanvas = starBurstRef.current;
-                const starContext = starCanvas.getContext('2d');
-
-                starContext.clearRect(0, 0, starCanvas.width, starCanvas.height);
-                const radius = starCanvas.width / 500
-                starContext.beginPath();
-                starContext.arc(offsetX, offsetY, 8 * radius, 0, 2 * Math.PI);
-                starContext.fillStyle = 'rgba(222, 33, 22, 0.4)';
-                starContext.fill(); 
-
-                starContext.beginPath();
-                starContext.arc(offsetX, offsetY, 5 * radius, 0, 2 * Math.PI);
-                starContext.fillStyle = 'rgba(44, 43, 234, 0.7)';
-                starContext.fill(); 
-
-                starContext.beginPath();
-                starContext.arc(offsetX, offsetY, 2 * radius, 0, 2 * Math.PI);
-                starContext.fillStyle = 'rgba(44, 222, 22)';
-                starContext.fill(); 
-
-                setStarPoint([offsetX, offsetY])
+                drawStar(offsetX, offsetY)
             }
              
         }
@@ -253,7 +258,7 @@ const DrawingApp = (props) => {
         };
          
         forwardedRef.current = {
-            getBlob, handleClearCanvas
+            getBlob, handleClearCanvas, drawStar
         };
     } 
     

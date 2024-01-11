@@ -313,8 +313,8 @@ class PImage:
         img_blur = cv2.GaussianBlur(img_gray, (3,3), 0) 
         max_val = max(img_blur.shape) + 1 
  
-        # Canny Edge Detection
-        edges = cv2.Canny(image=img_blur, threshold1=cls.low - 255, threshold2=cls.high - 255) # Canny Edge Detection
+        # Canny Edge Detection  
+        edges = cv2.Canny(image=img_blur, threshold1=cls.low/100 - 255, threshold2=cls.high/100 - 255) # Canny Edge Detection
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
         closing = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel)
         dilate = cv2.dilate(edges,kernel,iterations = 1)
@@ -659,7 +659,7 @@ class PImage:
         #     frame = cv2.flip(frame, 0)
         #     cls.path_x += (org_height - abs( (org_height * math.cos(math.radians(direction))) + (org_width * math.sin(math.radians(direction))))) / 2 
          
-        blur_constant = max(org_height, org_width) // 30 
+        blur_constant = 30
 
         original_frame = np.copy(frame)  
         if inFilter:

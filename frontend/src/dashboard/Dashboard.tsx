@@ -16,6 +16,7 @@ import Button from '@mui/material/Button';
 import Slider from '@mui/material/Slider';
 import Compass from './Compass';
 import DashboardList from './DashboardList';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 function Copyright(props: any) {
   return (
@@ -132,8 +133,16 @@ const defaultTheme = createTheme({
     mode: 'dark',
   },
 });
+
 const MAX_PIXEL_SIZE = 2500*2500
-export default function Dashboard() { 
+
+type DashboardProps = {
+  scrollToExamples: () => void;
+}
+
+export default function Dashboard(props:DashboardProps) { 
+
+  const {scrollToExamples} = props;
   // const apiUrl = 'http://127.0.0.1:5000';  
   const apiUrl = 'https://www.joseph-parker.ca';
   
@@ -257,7 +266,7 @@ export default function Dashboard() {
     } else {
         const fileUrl = URL.createObjectURL(file);
         handleSetImage(fileUrl);
-    }
+    } 
   };
 
   const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
@@ -328,7 +337,7 @@ export default function Dashboard() {
       img.onload = () => {
           setImageWidth(img.width);
           setImageHeight(img.height);
-          setInitialized(false);
+          setInitialized(false); 
       }
       img.src = imageUrl;   
   }
@@ -424,9 +433,9 @@ export default function Dashboard() {
 
   const handleClearCanvas = () => {
     drawingAppRef.current.handleClearCanvas(); 
-  }
+  }  
 
-  const handleSave = () => {
+  const handleSave = () => { 
     window.open(processedImage, '_blank');
   };
 
@@ -515,8 +524,20 @@ export default function Dashboard() {
                     color="inherit" 
                     sx={{ flexGrow: 2 }}>
                       Save Image
+                  </Button>
+                  <Button 
+                    onClick={scrollToExamples} 
+                    disabled={disableSort}
+                    color="inherit" 
+                    sx={{ flexGrow: 2, color:'tomato'}}
+                    endIcon={<HelpOutlineIcon sx={{mt:'-5px'}}/>}>
+                      Help and Examples
                   </Button> 
               </Box> 
+              <Typography id="threshold-slider-label" 
+              sx={{pl: '7px', mb: '-11px'}} gutterBottom>
+                Threshold Min/Max
+              </Typography>
               <Slider
                 disabled={disableSettings}
                 getAriaLabel={() => 'Threshold Min/Max'}
