@@ -26,7 +26,7 @@ const DirectionAndPath = () => {
         <h1>Direction And Path Type</h1>
         <div> 
         <p>To pick the direction of the pixel sorting use the direction compass in the top right corner.</p> 
-        <p>There are several different path typs and settings you can use for different effects. To use them:</p> 
+        <p>There are several different path types and settings you can use for different effects. To use them:</p> 
         <ul>
           <li>Click on the 'Path Type' dropdown in the menu on the left.</li>
           <li>Select a Path Type.</li>
