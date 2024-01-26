@@ -1,1 +1,1 @@
-export const apiUrl: string = 'https://www.joseph-parker.ca:5000'; 
+export const apiUrl: string = 'https://www.joseph-parker.ca'; 
