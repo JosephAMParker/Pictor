@@ -1,10 +1,14 @@
-import os 
+import asyncio
+import os
+import re 
 import cv2   
 import traceback 
 
 import numpy as np 
-from flask import request, Flask, Response, send_file
-from flask_cors import CORS, cross_origin 
+from flask import jsonify, request, Flask, Response, send_file, send_from_directory 
+from flask_cors import CORS 
+import pyppeteer
+from urllib.parse import urlparse
 
 from pimage import PImage
 from pvideo import PVideo
@@ -12,13 +16,126 @@ from pvideo import PVideo
 # from memory_profiler import profile
 
 app = Flask(__name__)
-#CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
-#CORS(app, resources={r"/api/*": {"origins": "http://192.168.1.74:3000/"}})
-#CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app) 
 
-cors = CORS(app)
-#cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
+def get_company_from_id(identifier):
+    user_mapping = { 
+        'a864b84': 'D-Wave',
+        '1918ebf': 'Pacific Salmon Foundation'
+    }
+    return user_mapping.get(identifier, 'UnknownUser')
 
+def get_message(company):
+    user_message_mapping = { 
+        'D-Wave': 'hello quantum',
+        'Pacific Salmon Foundation': 'red fish'
+    }
+    return user_message_mapping.get(company, 'Generic welcome message') 
+
+def get_company_site(company):
+    user_site_mapping = { 
+        'D-Wave': 'https://www.dwavesys.com/',
+        'Pacific Salmon Foundation': 'https://psf.ca/about/#av_section_3'
+    }
+    return user_site_mapping.get(company, 'https://example.com/') 
+
+def get_cover_letter_file_name(company):
+    user_filename_mapping = { 
+        'D-Wave': 'D-Wave_CoverLetter.pdf',
+        'Pacific Salmon Foundation': 'D-Wave_CoverLetter.pdf',
+    }
+    return user_filename_mapping.get(company, 'none.pdf') 
+
+@app.route('/api/setup-user', methods=['POST'])
+def get_company():
+    try:
+        user_identifier = request.form.get('u')
+        company = get_company_from_id(user_identifier)  
+        return company
+    except Exception as e:
+        app.logger.error(f"Error: {str(e)}")   
+        app.logger.error("Stack trace:")
+        traceback.print_exc()
+        
+        return str(e), 500
+
+@app.route('/api/get-message', methods=['POST'])
+def get_user_message():
+    try:
+        company = request.form.get('ut')
+        user_message = get_message(company)
+        company_site = get_company_site(company)
+        return jsonify({'user_message': user_message, 'company_site': company_site})
+    except Exception as e:
+        app.logger.error(f"Error: {str(e)}")   
+        app.logger.error("Stack trace:")
+        traceback.print_exc()
+        
+        return str(e), 500
+    
+@app.route('/api/get-cover-letter', methods=['POST'])
+def get_cover_letter():
+    company_name = request.form.get('ut')  
+    relative_coverletter_path = 'pictor/backend/public/coverletters'  
+    coverletter_folder = os.getcwd()  
+    pdf_name = get_cover_letter_file_name(company_name)   
+    pdf_path = os.path.join(coverletter_folder, relative_coverletter_path, pdf_name) 
+
+    # Check if the PDF file exists
+    if os.path.exists(pdf_path):
+        return send_file(pdf_path, as_attachment=True, mimetype='application/pdf', download_name='cover_letter.pdf')
+    else:
+        return 'PDF not found', 404  
+
+async def capture_screenshot(url, screenshot_path):
+    # screenshot_path = os.path.join(temp_dir, 'screenshot.png')
+    browser = await pyppeteer.launch(
+                                args=[
+                                    "--no-sandbox",
+                                    "--single-process",
+                                    "--disable-dev-shm-usage",
+                                    "--disable-gpu",
+                                    "--no-zygote",
+                                ],
+                                handleSIGINT=False,
+                                handleSIGTERM=False,
+                                handleSIGHUP=False,
+                                headless=True, )
+    page = await browser.newPage()
+    await page.goto(url) 
+    await page.waitFor(13500)
+    await page.setViewport({'width':1920, 'height': 0})
+    await page.screenshot({"fullPage": True, 'path': screenshot_path})
+    await browser.close()
+    return screenshot_path
+
+def sanitize_filename(url):
+    # Remove characters that are not allowed in filenames
+    safe_chars = re.sub(r'[^\w\s.-]', '', url)
+    return f'{safe_chars}.png'
+
+@app.route('/api/capture', methods=['POST'])
+def capture(): 
+
+    data = request.get_json()
+    url = data.get('url')
+
+    # Validate that the provided URL is well-formed
+    if not url or urlparse(url).scheme not in ('http', 'https'):
+        return jsonify({'error': 'Invalid URL parameter'}), 400
+
+    relative_screenshot_path = 'pictor/backend/public/tmp'  
+    screenshot_folder = os.getcwd()
+    safe_url = sanitize_filename(url)
+    screenshot_path = os.path.join(screenshot_folder, relative_screenshot_path, safe_url) 
+
+    # Check if the file already exists
+    if os.path.exists(screenshot_path):
+        return send_file(screenshot_path, as_attachment=True)
+    
+    asyncio.run(capture_screenshot(url, screenshot_path))
+    return send_file(screenshot_path, as_attachment=True)
+    
 # Define a route for the root path
 @app.route('/')
 def home():

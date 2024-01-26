@@ -5,8 +5,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar'; 
 import Typography from '@mui/material/Typography'; 
-import Container from '@mui/material/Container'; 
-import Link from '@mui/material/Link'; 
+import Container from '@mui/material/Container';  
 import Resizer from 'react-image-file-resizer'; 
 import Input from '@mui/material/Input';
 import { useEffect, useState } from 'react';
@@ -17,14 +16,14 @@ import Slider from '@mui/material/Slider';
 import Compass from './Compass';
 import DashboardList from './DashboardList';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { apiUrl } from '../Constants';
 
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Joseph Parker
-      </Link>{' '}
+      Joseph Parker
+      {' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
@@ -142,10 +141,7 @@ type DashboardProps = {
 
 export default function Dashboard(props:DashboardProps) { 
 
-  const {scrollToExamples} = props;
-  // const apiUrl = 'http://127.0.0.1:5000';  
-  const apiUrl = 'https://www.joseph-parker.ca';
-  
+  const {scrollToExamples} = props;  
   
   const [processedImage, setProcessedImage] = useState('');  
   const [originalImage, setOriginalImage] = useState('');
