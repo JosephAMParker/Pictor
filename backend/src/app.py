@@ -76,7 +76,7 @@ def get_user_message():
 @app.route('/api/get-cover-letter', methods=['POST'])
 def get_cover_letter():
     company_name = request.form.get('ut')  
-    relative_coverletter_path = 'pictor/backend/public/coverletters'  
+    relative_coverletter_path = 'backend/public/coverletters'  
     coverletter_folder = os.getcwd()  
     pdf_name = get_cover_letter_file_name(company_name)   
     pdf_path = os.path.join(coverletter_folder, relative_coverletter_path, pdf_name) 
@@ -103,7 +103,7 @@ async def capture_screenshot(url, screenshot_path):
                                 headless=True, )
     page = await browser.newPage()
     await page.goto(url) 
-    await page.waitFor(13500)
+    await page.waitFor(500)
     await page.setViewport({'width':1920, 'height': 0})
     await page.screenshot({"fullPage": True, 'path': screenshot_path})
     await browser.close()
@@ -124,7 +124,7 @@ def capture():
     if not url or urlparse(url).scheme not in ('http', 'https'):
         return jsonify({'error': 'Invalid URL parameter'}), 400
 
-    relative_screenshot_path = 'pictor/backend/public/tmp'  
+    relative_screenshot_path = 'backend/public/tmp'  
     screenshot_folder = os.getcwd()
     safe_url = sanitize_filename(url)
     screenshot_path = os.path.join(screenshot_folder, relative_screenshot_path, safe_url) 
