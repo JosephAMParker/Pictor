@@ -1,8 +1,6 @@
 // Examples.tsx
-
-import { Container, Divider } from '@mui/material';
-import React from 'react';
-import { Link } from 'react-router-dom';
+import * as React from 'react';
+import { Container, Divider } from '@mui/material'; 
 import DirectionAndPath from './DirectionAndPath';
 import ThresholdExample from './ThresholdExample'; 
 import Masking from './Masking'; 

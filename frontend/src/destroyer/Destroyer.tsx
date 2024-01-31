@@ -114,7 +114,7 @@ const Destroyer = () => {
             document.body.style.overflow = "";
         }
         
-    },[originalScroll]);
+    },[originalScroll, location.pathname]);
 
     const closeDestroyer = React.useCallback(() => { 
         setModeOn(false);
@@ -137,46 +137,46 @@ const Destroyer = () => {
         return () => {
           window.removeEventListener('popstate', handleNavigation);
         };
-    }, [closeDestroyer]); 
-    
-
-    function drawCrack(e: MouseEvent, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
-        const x = e.clientX - canvas.getBoundingClientRect().left;
-        const y = e.clientY - canvas.getBoundingClientRect().top;
-    
-        const crackImage = new Image();
-        crackImage.src = process.env.PUBLIC_URL + 'glass/crack1.png'
-    
-        crackImage.onload = () => {
-            // Calculate the position to center the image at the click coordinates
-            const imageX = x - crackImage.width / 2;
-            const imageY = y - crackImage.height / 2;
-
-            // Save the current transformation matrix
-            context.save();
-
-            // Translate the canvas origin to the center of the image
-            context.translate(imageX + crackImage.width / 2, imageY + crackImage.height / 2);
-
-            // Rotate the canvas by a specified angle (in radians)
-            const rotateAngle = Math.random() * (2 * Math.PI);
-            context.rotate(rotateAngle);
-
-            // Draw the crack image on the canvas
-            context.drawImage(crackImage, -crackImage.width / 2, -crackImage.height / 2);
-
-            // Restore the original transformation matrix
-            context.restore(); 
-            // Draw white border around frame
-            context.strokeStyle = '#FFF';  
-            context.lineWidth = 2; 
-            context.strokeRect(0, 0, canvas.width, canvas.height);
-        };
-
-        console.log(imageList.length)
-    }
+    }, [closeDestroyer]);  
 
     React.useEffect(() => { 
+
+        function drawCrack(e: MouseEvent, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+            const x = e.clientX - canvas.getBoundingClientRect().left;
+            const y = e.clientY - canvas.getBoundingClientRect().top;
+        
+            const crackImage = new Image();
+            crackImage.src = process.env.PUBLIC_URL + 'glass/crack1.png'
+        
+            crackImage.onload = () => {
+                // Calculate the position to center the image at the click coordinates
+                const imageX = x - crackImage.width / 2;
+                const imageY = y - crackImage.height / 2;
+    
+                // Save the current transformation matrix
+                context.save();
+    
+                // Translate the canvas origin to the center of the image
+                context.translate(imageX + crackImage.width / 2, imageY + crackImage.height / 2);
+    
+                // Rotate the canvas by a specified angle (in radians)
+                const rotateAngle = Math.random() * (2 * Math.PI);
+                context.rotate(rotateAngle);
+    
+                // Draw the crack image on the canvas
+                context.drawImage(crackImage, -crackImage.width / 2, -crackImage.height / 2); 
+    
+                // Restore the original transformation matrix
+                context.restore(); 
+                // Draw white border around frame
+                context.strokeStyle = '#FFF';  
+                context.lineWidth = 2; 
+                context.strokeRect(0, 0, canvas.width, canvas.height);
+            };
+    
+            console.log(imageList.length)
+        }
+
         function checkCracks() {
             const worker = new Worker('glassWorker.js', { type : 'module' } );
             const canvas = canvasRef.current
@@ -239,11 +239,8 @@ const Destroyer = () => {
                         canvas.removeEventListener('mousemove', handleMouseMove);
                         canvas.removeEventListener('mouseup', handleMouseUp);
                     }
-                }
-                
-            }
-            
-            
+                } 
+            }  
         } 
         
     }, [canvasRef, imageList, workerGreenLight]) 

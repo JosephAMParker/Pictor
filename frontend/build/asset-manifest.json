@@ -1,15 +1,23 @@
 {
   "files": {
     "main.css": "/static/css/main.1416a826.css",
-    "main.js": "/static/js/main.4ff79722.js",
+    "main.js": "/static/js/main.5ba7ed19.js",
     "static/js/787.a8f03a81.chunk.js": "/static/js/787.a8f03a81.chunk.js",
+    "stardog2.jpeg": "/1a0a03f7df363f280cbda18a737f3896.jpeg",
+    "wavy_sky_desert.jpeg": "/0092732451f1a981d2e008d8c28caa9b.jpeg",
+    "cabin.jpeg": "/1a155e64cd22550a664a4d7553481b30.jpeg",
+    "snow_tree.jpeg": "/34c55b15721821d10ed4d00830c665fc.jpeg",
+    "dog.jpeg": "/8276d60adb4cf1d3079f4439d5446d64.jpeg",
+    "pink_sky.jpg": "/678cf2db3e3e09b8dbba490f2e5c68f7.jpg",
+    "sortDown.jpeg": "/a1727171b0315674b8a109306f6646e0.jpeg",
+    "humming_bird.jpg": "/c63d2372d56f953963cf44d2d3809d66.jpg",
     "index.html": "/index.html",
     "main.1416a826.css.map": "/static/css/main.1416a826.css.map",
-    "main.4ff79722.js.map": "/static/js/main.4ff79722.js.map",
+    "main.5ba7ed19.js.map": "/static/js/main.5ba7ed19.js.map",
     "787.a8f03a81.chunk.js.map": "/static/js/787.a8f03a81.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1416a826.css",
-    "static/js/main.4ff79722.js"
+    "static/js/main.5ba7ed19.js"
   ]
 }

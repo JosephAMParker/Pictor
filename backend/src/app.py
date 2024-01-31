@@ -87,7 +87,7 @@ def get_cover_letter():
     else:
         return 'PDF not found', 404  
 
-async def capture_screenshot(url, screenshot_path):
+async def capture_screenshot(url, screenshot_path, width):
     # screenshot_path = os.path.join(temp_dir, 'screenshot.png')
     browser = await pyppeteer.launch(
                                 args=[
@@ -103,22 +103,23 @@ async def capture_screenshot(url, screenshot_path):
                                 headless=True, )
     page = await browser.newPage()
     await page.goto(url) 
-    await page.waitFor(500)
-    await page.setViewport({'width':1920, 'height': 0})
+    await page.waitFor(750)
+    await page.setViewport({'width': width, 'height': 0})
     await page.screenshot({"fullPage": True, 'path': screenshot_path})
     await browser.close()
     return screenshot_path
 
-def sanitize_filename(url):
+def sanitize_filename(url, width):
     # Remove characters that are not allowed in filenames
     safe_chars = re.sub(r'[^\w\s.-]', '', url)
-    return f'{safe_chars}.png'
+    return f'{safe_chars}-{width}.png'
 
 @app.route('/api/capture', methods=['POST'])
 def capture(): 
 
     data = request.get_json()
     url = data.get('url')
+    width = int(data.get('width'))
 
     # Validate that the provided URL is well-formed
     if not url or urlparse(url).scheme not in ('http', 'https'):
@@ -126,14 +127,14 @@ def capture():
 
     relative_screenshot_path = 'backend/public/tmp'  
     screenshot_folder = os.getcwd()
-    safe_url = sanitize_filename(url)
+    safe_url = sanitize_filename(url, width)
     screenshot_path = os.path.join(screenshot_folder, relative_screenshot_path, safe_url) 
 
     # Check if the file already exists
     if os.path.exists(screenshot_path):
         return send_file(screenshot_path, as_attachment=True)
     
-    asyncio.run(capture_screenshot(url, screenshot_path))
+    asyncio.run(capture_screenshot(url, screenshot_path, width))
     return send_file(screenshot_path, as_attachment=True)
     
 # Define a route for the root path

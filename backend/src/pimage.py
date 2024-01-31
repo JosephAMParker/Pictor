@@ -738,6 +738,7 @@ class PImage:
         blend_constant = 0
         # alpha_channel = original_alpha_channel
         alpha_channel = None
+        stamp = cv2.blur(stamp, (1,1))
         if blend: 
             img_filter = cv2.blur(img_filter, (blur_constant, blur_constant))
             alpha_channel = (img_filter[:, :, 3] / 255.0)

@@ -136,7 +136,7 @@ const defaultTheme = createTheme({
 const MAX_PIXEL_SIZE = 2500*2500
 
 type DashboardProps = {
-  scrollToExamples: () => void;
+  scrollToExamples: (showGallery:boolean) => void;
 }
 
 export default function Dashboard(props:DashboardProps) { 
@@ -528,12 +528,19 @@ export default function Dashboard(props:DashboardProps) {
                       Save Image
                   </Button>
                   <Button 
-                    onClick={scrollToExamples} 
+                    onClick={() => scrollToExamples(false)} 
                     disabled={disableSort}
                     color="inherit" 
                     sx={{ flexGrow: 2, color:'tomato'}}
                     endIcon={<HelpOutlineIcon sx={{mt:'-5px'}}/>}>
                       Help and Examples
+                  </Button> 
+                  <Button 
+                    onClick={() => scrollToExamples(true)} 
+                    disabled={disableSort}
+                    color="inherit" 
+                    sx={{ flexGrow: 2 }}  >
+                      Gallery
                   </Button> 
               </Box> 
               <Typography id="threshold-slider-label" 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import * as React from 'react';
 import axios from 'axios';
 import { apiUrl } from '../Constants';
 
@@ -6,13 +6,13 @@ const SiteSmash: React.FC = () => {
   const [screenshot, setScreenshot] = React.useState('');
   const [siteUrl, setSiteUrl] = React.useState('');  
 
-  useEffect(() => {
+  React.useEffect(() => {
     const captureScreenshot = async () => {
       if (!siteUrl){
         return
       }
       try {
-        const response = await axios.post(apiUrl + '/api/capture', { url:siteUrl }, {
+        const response = await axios.post(apiUrl + '/api/capture', { url:siteUrl, width:window.innerWidth }, {
           responseType: 'arraybuffer',
         }); 
         const blob = new Blob([response.data], { type: 'image/png' });
@@ -25,7 +25,7 @@ const SiteSmash: React.FC = () => {
     captureScreenshot();
   }, [siteUrl]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const url = urlSearchParams.get('url');
     if(url){

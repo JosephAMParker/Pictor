@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import * as React from 'react';
 
 const Neowise: React.FC = () => {
   const neowiseSiteUrl = 'https://josephamparker.github.io/neowise-site/'; 

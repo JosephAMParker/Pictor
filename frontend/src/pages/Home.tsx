@@ -1,7 +1,6 @@
 // Home.tsx
-
-import axios from 'axios';
-import React from 'react'; 
+import * as React from 'react';
+import axios from 'axios'; 
 import { apiUrl } from '../Constants';
 import { Box, Button, Container, CssBaseline, Grid, List, ListItem, ThemeProvider, Typography, createTheme, responsiveFontSizes, styled } from '@mui/material'; 
 import { Link } from 'react-router-dom'; 
@@ -303,6 +302,10 @@ const Home = (props: HomeProps) => {
       </PDFButtons> 
       
       <PDFRenderer file={pdf} />   
+
+      <PDFButtons > 
+        <Button onClick={() => handleScrollToPDF()}>Scroll Up</Button>
+      </PDFButtons> 
       
     </ThemeProvider>
   );
