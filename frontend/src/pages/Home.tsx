@@ -237,8 +237,8 @@ const Home = (props: HomeProps) => {
       <InfoP>
         <p>joeyparker47@gmail.com </p>
         <p>Based in Vancouver, BC</p> 
-        <Button onClick={() => {setPDF(resume_pdf); handleScrollToPDF()}}>Resume</Button> 
         {coverLetter && <Button onClick={() => {setPDF(coverLetter); handleScrollToPDF()}}>Cover Letter</Button>}
+        <Button onClick={() => {setPDF(resume_pdf); handleScrollToPDF()}}>Resume</Button>  
       </InfoP> 
     )
 
