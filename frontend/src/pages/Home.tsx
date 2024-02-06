@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import PDFRenderer from '../util/PDFRenderer'; 
+import Animate from '../animate/Animate';
 
 let theme = createTheme({
   palette: {
@@ -24,7 +25,8 @@ const AppContainer = styled(Box)`
   height: 100vh;
   width: 100vw;
   display: flex;
-  background-color: #f5f0e6;  
+  background-color: #f5f0e6; 
+  z-index: 2; 
 `;
 
 const StyledContainer = styled(Container)`
@@ -81,17 +83,33 @@ const ContentButton = styled(Button)`
 `;
 
 const ContentDiv = styled('div')`
-  && { 
+  && {  
+    width: fit-content;
+    position: relative; 
+    background-color: #fffefc;
+    z-index: 900;
+    opacity: 0.8;
+    border-radius: 50px;
+    &&::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      z-index: -1;
+      background: inherit;
+      filter: blur(10px); /* Apply blur effect to the pseudo-element */
+    }
     p {
       margin-top: 0; 
     }
   }
-`;
+`; 
 
 const PDFButtons = styled('div')`
   && { 
     width: 100%;
-    max-width: calc(100% - 2em);
     background-color: #f5f0e6;
     text-align: center; 
     padding:10px;
@@ -111,6 +129,11 @@ const InfoP = styled('p')`
   }
 `;
 
+const ProjectDiv = styled('div')`
+  && {  
+
+  } 
+`;
 
 export enum ContentPage {
   GREETING = 'Greeting',
@@ -148,6 +171,7 @@ const Home = (props: HomeProps) => {
   const resume_pdf = process.env.PUBLIC_URL + '/resume.pdf'
 
   const [pdf, setPDF] = React.useState(resume_pdf)
+  const [coverLetterLoading, setCoverLetterLoading] = React.useState(false)
   const pdfRef = React.useRef<HTMLDivElement | null>(null);
 
   const handleScrollToPDF = () => {
@@ -182,12 +206,14 @@ const Home = (props: HomeProps) => {
     const getCoverLetter = async () => {
       try {
         const user_type = localStorage.getItem('user_type')  
-        if (user_type && user_type !== 'UnknownUser' && !coverLetter){
+        if (user_type && user_type !== 'UnknownUser' && !coverLetter && !coverLetterLoading){
+          setCoverLetterLoading(true);
           const formData = new FormData(); 
           formData.append('ut', user_type.toString());
           const response = await axios.post(apiUrl + '/api/get-cover-letter', formData, { responseType: 'blob' });
           const file = response.data
           setCoverLetter(URL.createObjectURL(file));
+          setCoverLetterLoading(false);
         } 
       } catch (error) {
         console.error('Error getting user info:', error); 
@@ -205,7 +231,7 @@ const Home = (props: HomeProps) => {
       window.removeEventListener('userSetupComplete', getUserMessage);
     }; 
 
-  }, [message, company, coverLetter, setMessage, setUrlParameter, setContent, setCompany, setCoverLetter]);
+  }, [message, company, coverLetter, setMessage, setUrlParameter, setContent, setCompany, setCoverLetter, coverLetterLoading]);
 
   const renderGreeting = () => {
 
@@ -223,9 +249,20 @@ const Home = (props: HomeProps) => {
 
     return (
       <>
-        <div><Link to="/pictor">Pictor</Link></div>
-        <div><Link to="/neowise">NeoWise</Link></div>
-        <div><Link to={`/screen?url=${encodeURIComponent(urlParameter)}`}>Screen</Link></div>
+        <ProjectDiv>
+          <h1>Pictor</h1>
+          <p>A web app for creating glitch art using a concept called pixel sorting. Users can experiment with several different settings to create unique visual effects.</p>
+          <Link to="/pictor">Pictor</Link>
+        </ProjectDiv>
+        <ProjectDiv>
+          <h1>Screen Smasher</h1>
+          <p>Notice that big red button over to the right? Try pressing it for some cathartic fun. You can find this button on almost any page of this site.</p> 
+          </ProjectDiv>
+        <ProjectDiv>
+          <h1>NeoWise</h1>
+          <p>A game being developed for mobile devices, a personal project of mine. Still early in development.</p>
+          <Link to="/neowise">NeoWise</Link>
+        </ProjectDiv> 
       </>
     )
 
@@ -306,7 +343,8 @@ const Home = (props: HomeProps) => {
       <PDFButtons > 
         <Button onClick={() => handleScrollToPDF()}>Scroll Up</Button>
       </PDFButtons> 
-      
+
+      <Animate />      
     </ThemeProvider>
   );
 };

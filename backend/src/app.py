@@ -21,21 +21,27 @@ cors = CORS(app)
 def get_company_from_id(identifier):
     user_mapping = { 
         'a864b84': 'D-Wave',
-        '1918ebf': 'Pacific Salmon Foundation'
+        '1918ebf': 'Pacific Salmon Foundation',
+        '844c86a': 'Stripe',
+        '1e84da4': 'Khan Academy',
     }
     return user_mapping.get(identifier, 'UnknownUser')
 
 def get_message(company):
     user_message_mapping = { 
         'D-Wave': 'hello quantum',
-        'Pacific Salmon Foundation': 'red fish'
+        'Pacific Salmon Foundation': 'red fish',
+        'Stripe':'banks',
+        'Khan Academy':'school',
     }
     return user_message_mapping.get(company, 'Generic welcome message') 
 
 def get_company_site(company):
     user_site_mapping = { 
         'D-Wave': 'https://www.dwavesys.com/',
-        'Pacific Salmon Foundation': 'https://psf.ca/about/#av_section_3'
+        'Pacific Salmon Foundation': 'https://psf.ca/about/#av_section_3',
+        'Stripe':'https://stripe.com/en-ca',
+        'Khan Academy':'https://www.khanacademy.org/',
     }
     return user_site_mapping.get(company, 'https://example.com/') 
 
@@ -43,6 +49,8 @@ def get_cover_letter_file_name(company):
     user_filename_mapping = { 
         'D-Wave': 'D-Wave_CoverLetter.pdf',
         'Pacific Salmon Foundation': 'D-Wave_CoverLetter.pdf',
+        'Stripe': 'D-Wave_CoverLetter.pdf',
+        'Khan Academy':'D-Wave_CoverLetter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 

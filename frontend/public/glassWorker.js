@@ -1,30 +1,11 @@
-class TupleMap {
-    constructor(width) {
-        this.map = new Map();
-        this.width = width
-    }
-
-    set(x, y, value){
-        this.map.set(y * this.width + x, value)
-        return this
-    }
-
-    get(x, y){
-        return this.map.get(y * this.width + x)
-    }
-
-    has(x, y){
-        return this.map.has(y * this.width + x)
-    }
-}
-
 class CustomImageData {
-    constructor(pixelData, x, y, width, height, key){
+    constructor(pixelData, x, y, width, height, size, key){
         this.pixelData = pixelData
         this.x = x
         this.y = y
         this.width = width
         this.height = height
+        this.size = size
         this.key = key
     }
 }
@@ -33,19 +14,18 @@ self.onmessage = function (event) {
 
     class Component {
         constructor(y, x) {
-            this.pixels = [(y, x)];
-            
+            this.pixels = [(y, x)]; 
             this.min_x = x;
             this.max_x = x;
             this.min_y = y;
             this.max_y = y;
             this.equalComponents = new Set();
             this.label = componentLabel;
-        }
-
-        addPixel(x, y) {
-            this.pixels.push((x, y))
-            pixel2Label.set(x, y, this.label)
+            this.size = 0
+        } 
+        
+        addOne() {
+            this.size += 1
         }
 
         setMinx(x) {
@@ -62,24 +42,21 @@ self.onmessage = function (event) {
 
         setMaxy(y) {
             this.max_y = Math.max(y, this.max_y)
-        }
+        }    
     }
 
     var data = event.data.data;
     var width = event.data.width;
-    var height = event.data.height;
-    
-    const pixel2Label = new TupleMap(width);
-    const label2Component = {} 
+    var height = event.data.height; 
+
     const allComponents = []
-    const allLabels = Array.from({ length: height }, () => Array(width).fill(0));
-    // const allLabels = Array.from({ length: height }, () => Array(width));
+    const allLabels = Array.from({ length: height }, () => Array(width).fill(0)); 
     var componentLabel = 0
 
     const pixelIsBlack = (y, x) => { 
-        return data[(y * width + x) * 4 + 0] === 0 &&
-               data[(y * width + x) * 4 + 1] === 0 &&
-               data[(y * width + x) * 4 + 2] === 0 
+        return data[(y * width + x) * 4 + 0] <= 0 &&
+               data[(y * width + x) * 4 + 1] <= 0 &&
+               data[(y * width + x) * 4 + 2] <= 0
     }  
     const setPixelBlack = (y, x) => { 
         data[(y * width + x) * 4 + 0] = 0 
@@ -151,12 +128,12 @@ self.onmessage = function (event) {
                         component.setMinx(_x)
                         component.setMaxy(_y)
                         component.setMiny(_y) 
+                        component.addOne()
                     }
                 }
                 if(isBorderComponent){ 
                     isBorderComponent = false
-                } 
-
+                }  
             }  
         }
     }  
@@ -179,14 +156,17 @@ self.onmessage = function (event) {
                 
             }
         }  
-        componentPixelData.push(new CustomImageData(
-                                Uint8ClampedArray.from(currentComponentData),
-                                component.min_x,
-                                component.min_y,
-                                component.max_x-component.min_x + 1,
-                                component.max_y-component.min_y + 1,
-                                crypto.randomUUID() 
-                                ));
+        if (component.size > 0){
+            componentPixelData.push(new CustomImageData(
+                                    Uint8ClampedArray.from(currentComponentData),
+                                    component.min_x,
+                                    component.min_y,
+                                    component.max_x-component.min_x + 1,
+                                    component.max_y-component.min_y + 1,
+                                    component.size,
+                                    crypto.randomUUID() 
+                                    ));
+                                }
 
         // componentPixelData.push(new ReturnCanvas(currentComponentData, component.min_x, component.min_y, component.max_x-component.min_x, component.max_y-component.min_y));
     }
