@@ -242,16 +242,14 @@ class FollowPoint {
 }
 
 const calculateRotation = (vx: number, vy: number, vz: number) => {
-    const radiansToDegrees = 180 / Math.PI; 
-    // Calculate rotation around the x-axis (pitch)
-    const pitch = Math.atan2(vy, vz) * radiansToDegrees;
+    const radiansToDegrees = 180 / Math.PI;  
     // Calculate rotation around the y-axis (yaw)
     const v = Math.sqrt(vx**2 + vy**2 + vz**2)
     const yaw = Math.asin(vz / v) * radiansToDegrees; 
     // Calculate rotation around the z-axis (roll)
     const roll = Math.atan2(vy, vx) * radiansToDegrees;
 
-    return { x: pitch, y: yaw, z: roll };
+    return { y: yaw, z: roll };
 };
 
 const mapPhaseValue = (value: number): number => {
@@ -272,7 +270,8 @@ const mapPhaseValue = (value: number): number => {
     return mappedValue;
 };
 
-const NUMBER_OF_BOIDS = 207;
+const NUMBER_OF_BOIDS = 107;
+
 enum FollowMode {
     ONE_GROUP = "ONE_GROUP",
     TWO_GROUPS = "TWO_GROUPS",
