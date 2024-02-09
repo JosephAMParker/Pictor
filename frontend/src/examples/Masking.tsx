@@ -40,7 +40,7 @@ const Masking = () => {
           <li>Select 'Draw'.</li>
           <li>Draw a small circle around the UFO.</li>
           <li>Check 'Invert Mask' - with this checked, pixels outside of the drawn mask will be selected.</li>
-          <li>Check 'Blur Mask'   - with this checked the edges of the mask will be blured to blend in with the rest of the image.</li>
+          <li>Check 'Blur Mask'   - with this checked the edges of the mask will be blurred to blend in with the rest of the image.</li>
           <li>Press 'Sort'.</li>
         </ul>
         <p>You may wish to keep 'Show Affected Pixels' on while drawing so you can easily see which pixels are being selected.</p>

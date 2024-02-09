@@ -24,6 +24,7 @@ def get_company_from_id(identifier):
         '1918ebf': 'Pacific Salmon Foundation',
         '844c86a': 'Stripe',
         '1e84da4': 'Khan Academy',
+        'fb718d5': 'Aspect Biosystems',
     }
     return user_mapping.get(identifier, 'UnknownUser')
 
@@ -33,6 +34,7 @@ def get_message(company):
         'Pacific Salmon Foundation': 'red fish',
         'Stripe':'banks',
         'Khan Academy':'school',
+        'Aspect Biosystems':'bio'
     }
     return user_message_mapping.get(company, 'Generic welcome message') 
 
@@ -45,12 +47,23 @@ def get_company_site(company):
     }
     return user_site_mapping.get(company, 'https://example.com/') 
 
+def get_job_title(company):
+    user_site_mapping = { 
+        'D-Wave': 'feefef/',
+        'Pacific Salmon Foundation': 'efefef',
+        'Stripe':'efefef',
+        'Khan Academy':'efefef',
+        'Aspect Biosystems':'Fullstack Software Engineer'
+    }
+    return user_site_mapping.get(company, 'https://example.com/') 
+
 def get_cover_letter_file_name(company):
     user_filename_mapping = { 
         'D-Wave': 'D-Wave_CoverLetter.pdf',
         'Pacific Salmon Foundation': 'D-Wave_CoverLetter.pdf',
         'Stripe': 'D-Wave_CoverLetter.pdf',
         'Khan Academy':'D-Wave_CoverLetter.pdf',
+        'Aspect Biosystems':'Aspect_Bio.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
@@ -73,7 +86,8 @@ def get_user_message():
         company = request.form.get('ut')
         user_message = get_message(company)
         company_site = get_company_site(company)
-        return jsonify({'user_message': user_message, 'company_site': company_site})
+        job_title = get_job_title(company)
+        return jsonify({'user_message': user_message, 'company_site': company_site, 'job_title':job_title})
     except Exception as e:
         app.logger.error(f"Error: {str(e)}")   
         app.logger.error("Stack trace:")
@@ -124,26 +138,29 @@ def sanitize_filename(url, width):
 
 @app.route('/api/capture', methods=['POST'])
 def capture(): 
+    try:
+        data = request.get_json()
+        url = data.get('url')
+        width = int(data.get('width'))
 
-    data = request.get_json()
-    url = data.get('url')
-    width = int(data.get('width'))
+        # Validate that the provided URL is well-formed
+        if not url or urlparse(url).scheme not in ('http', 'https'):
+            return jsonify({'error': 'Invalid URL parameter'}), 500
 
-    # Validate that the provided URL is well-formed
-    if not url or urlparse(url).scheme not in ('http', 'https'):
-        return jsonify({'error': 'Invalid URL parameter'}), 400
+        relative_screenshot_path = 'backend/public/tmp'  
+        screenshot_folder = os.getcwd()
+        safe_url = sanitize_filename(url, width)
+        screenshot_path = os.path.join(screenshot_folder, relative_screenshot_path, safe_url) 
 
-    relative_screenshot_path = 'backend/public/tmp'  
-    screenshot_folder = os.getcwd()
-    safe_url = sanitize_filename(url, width)
-    screenshot_path = os.path.join(screenshot_folder, relative_screenshot_path, safe_url) 
-
-    # Check if the file already exists
-    if os.path.exists(screenshot_path):
+        # Check if the file already exists
+        if os.path.exists(screenshot_path):
+            return send_file(screenshot_path, as_attachment=True)
+        
+        asyncio.run(capture_screenshot(url, screenshot_path, width))
         return send_file(screenshot_path, as_attachment=True)
     
-    asyncio.run(capture_screenshot(url, screenshot_path, width))
-    return send_file(screenshot_path, as_attachment=True)
+    except Exception as e:
+        return jsonify({'error': 'Invalid URL parameter'}), 500
     
 # Define a route for the root path
 @app.route('/')

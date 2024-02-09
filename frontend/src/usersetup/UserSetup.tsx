@@ -28,11 +28,14 @@ const UserSetup: React.FC = () => {
 
                 // Trigger a custom event to signal that the setup is complete
                 const event = new Event('userSetupComplete');
-                window.dispatchEvent(event);
+                window.dispatchEvent(event); 
+            }
 
+            if (user_id){
                 const urlWithoutParams = window.location.pathname;
                 navigate(urlWithoutParams);
             }
+            
         } catch (error) {
             console.error('Error setting up user:', error); 
         }

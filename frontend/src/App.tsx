@@ -15,6 +15,7 @@ export default function App() {
   const [company, setCompany] = React.useState('')
   const [urlParameter, setUrlParameter] = React.useState('https://example.com/');
   const [coverLetter, setCoverLetter] = React.useState(null);
+  const [jobTitle, setJobTitle] = React.useState('')
 
   return (
     <> 
@@ -38,6 +39,7 @@ export default function App() {
                                       company={company} setCompany={setCompany}
                                       urlParameter={urlParameter} setUrlParameter={setUrlParameter}
                                       coverLetter={coverLetter} setCoverLetter={setCoverLetter} 
+                                      jobTitle={jobTitle} setJobTitle={setJobTitle}
                                 />} 
           />
           <Route path="pictor" element={<Pictor />} />

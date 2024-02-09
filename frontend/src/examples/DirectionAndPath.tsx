@@ -32,7 +32,7 @@ const DirectionAndPath = () => {
           <li>Select a Path Type.</li>
           <li>Click on the 'Path Settings' dropdown in the menu on the left.</li> 
           <li>Check 'Show Graph' to show an overlay of the current Path Settings</li>
-          <li>Adjust Path Settings to you liking.</li>
+          <li>Adjust Path Settings to your liking.</li>
           <li>Press 'Sort'.</li>
         </ul>
         </div>

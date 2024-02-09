@@ -426,10 +426,10 @@ const Animate = () => {
 
         const handleMouseDown = (event: MouseEvent) => {
             if (!(event.buttons === 1)) return;
-            setAvoidPoint([event.x, event.y])
+            setAvoidPoint([event.x, event.y]) 
         }
         const handleMouseUp = () => {
-            setAvoidPoint([])
+            setAvoidPoint([]) 
         }
 
         document.addEventListener('mousedown', handleMouseDown);

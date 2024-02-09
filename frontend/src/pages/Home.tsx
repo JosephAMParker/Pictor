@@ -2,7 +2,7 @@
 import * as React from 'react';
 import axios from 'axios'; 
 import { apiUrl } from '../Constants';
-import { Box, Button, Container, CssBaseline, Grid, List, ListItem, ThemeProvider, Typography, createTheme, responsiveFontSizes, styled } from '@mui/material'; 
+import { Box, Button, Container, CssBaseline, Grid, List, ListItem, TextField, ThemeProvider, Typography, createTheme, responsiveFontSizes, styled } from '@mui/material'; 
 import { Link } from 'react-router-dom'; 
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -22,7 +22,10 @@ let theme = createTheme({
 theme = responsiveFontSizes(theme);
 
 const AppContainer = styled(Box)`
-  height: 100vh;
+  @media only screen and (min-width: 1384px) {
+    height: 100vh;
+  }
+  min-height: 100vh;
   width: 100vw;
   display: flex;
   background-color: #f5f0e6; 
@@ -90,13 +93,22 @@ const ContentDiv = styled('div')`
     z-index: 900;
     opacity: 0.8;
     border-radius: 50px;
-    &&::before {
-      content: '';
-      position: absolute;
-      top: -10px;
-      left: -10px;
-      right: -10px;
-      bottom: -10px;
+    max-height: calc(100vh - 80px); /* Set a maximum height for the content */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x:hidden;
+    padding: 10px; /* Add padding for better readability */ 
+    scrollbar-width: none;
+    /* Hide scrollbar for WebKit browsers */
+    &::-webkit-scrollbar {
+      width: 0;  /* Make scrollbar invisible */
+      background: transparent;  /* Make scrollbar background transparent */
+    }
+
+    @media only screen and (min-width: 1384px) {
+      padding-top: 100px;
+    }
+
+    &&::before { 
       z-index: -1;
       background: inherit;
       filter: blur(10px); /* Apply blur effect to the pseudo-element */
@@ -120,26 +132,69 @@ const PDFButtons = styled('div')`
   }
 `;
 
-const InfoP = styled('p')`
+const InfoP = styled('div')`
   && {  
   }
+
+  & p {  
+    margin-bottom: auto;
+  } 
 
   & button {
     color: black; 
+    padding:0;
+    justify-content: left !important;
   }
+
+`;
+
+const Projects = styled('div')`
+  && {   
+    
+  } 
 `;
 
 const ProjectDiv = styled('div')`
-  && {  
-
+  & p {  
+    margin-bottom: auto;
   } 
+
+  & h1 {
+    margin-bottom: 0px;
+  }
 `;
+
+const ScreenSmashDiv = styled(ProjectDiv)` 
+  & div {
+    display: table;
+  }
+  & span {
+    display: table-cell;
+    vertical-align:middle;
+    padding: 10px;
+  }   
+`
+
+const URLLink = styled(Link)`
+  && {
+    display: table-cell;
+    vertical-align:middle; 
+    padding: 10px;
+  }
+`
+
+const ProjectLinkDiv = styled('div')`
+  && {
+    padding-top:10px;
+  }
+`
 
 export enum ContentPage {
   GREETING = 'Greeting',
   PROJECTS = 'Projects',
   INFO = 'Info',
-  NULL = 'null'
+  BIRDS = 'Watch the birds',
+  NULL = 'null',
 }
 
 interface HomeProps {
@@ -153,6 +208,8 @@ interface HomeProps {
   setUrlParameter: React.Dispatch<React.SetStateAction<string>> 
   coverLetter: any 
   setCoverLetter: React.Dispatch<React.SetStateAction<any>> 
+  jobTitle: string
+  setJobTitle: React.Dispatch<React.SetStateAction<string>> 
 }
 
 const Home = (props: HomeProps) => {   
@@ -166,11 +223,16 @@ const Home = (props: HomeProps) => {
           company,
           setCompany, 
           urlParameter, 
-          setUrlParameter } = props    
+          setUrlParameter,
+          jobTitle,
+          setJobTitle } = props    
 
   const resume_pdf = process.env.PUBLIC_URL + '/resume.pdf'
 
   const [pdf, setPDF] = React.useState(resume_pdf)
+  const [urlInput, setUrlInput] = React.useState('');
+  const [urlWarning, setUrlWarning] = React.useState('');
+  
   const [coverLetterLoading, setCoverLetterLoading] = React.useState(false)
   const pdfRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -191,8 +253,9 @@ const Home = (props: HomeProps) => {
             const response = await axios.post(apiUrl + '/api/get-message', formData); 
             setMessage(response.data.user_message)
             setUrlParameter(response.data.company_site) 
+            setJobTitle(response.data.job_title)
             setCompany(user_type)
-            setContent(ContentPage.GREETING);
+            setContent(ContentPage.GREETING); 
           } 
           
         } else {
@@ -231,41 +294,144 @@ const Home = (props: HomeProps) => {
       window.removeEventListener('userSetupComplete', getUserMessage);
     }; 
 
-  }, [message, company, coverLetter, setMessage, setUrlParameter, setContent, setCompany, setCoverLetter, coverLetterLoading]);
+  }, [message, company, coverLetter, setMessage, setUrlParameter, setContent, setCompany, setCoverLetter, setJobTitle, coverLetterLoading]);
 
   const renderGreeting = () => {
 
     return (
       <>
         {message && company && ( 
-          <p>Hello Hiring team for {company}! <br /> {message}</p> 
+          <>
+            <p>Hello Hiring team for {company}! <br /> 
+               Welcome to my site. You can check out some of my projects from the menu on the left in the 'Projects' tab, <br/>
+               In 'Info' you will find my Résumé and Cover Letter for my application to the {jobTitle} position.
+            </p>  
+          </>
         )}
       </>
     )
 
   }
 
+  const handleURLChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    try{ 
+      const protocolPattern = new RegExp('^(https?://)', 'i'); 
+      if(!protocolPattern.test(event.target.value)){
+        throw new SyntaxError(event.target.value + ' 1is not a valid URL.', {"cause": 'incorrectProtocol'})
+      }
+      var urlPattern = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
+	    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
+	    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
+	    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
+	    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
+	    '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator
+      if(!urlPattern.test(event.target.value)){
+        throw new SyntaxError(event.target.value + ' 2is not a valid URL.', {"cause": "bad url"})
+      }
+      const url = new URL(event.target.value)
+      setUrlWarning('')
+    } catch(error) {
+      if (error instanceof TypeError || error instanceof SyntaxError || error instanceof RangeError) {
+        // Handle invalid URL error 
+        if (error.cause === 'incorrectProtocol'){
+          setUrlWarning('missing http:// or https:// Try copying the url directly from your browsers search bar.')
+        } else {
+          setUrlWarning('invalid URL. Try copying the url directly from your browsers search bar.'); 
+        }
+      } else {
+        // Handle other types of errors
+        console.error('Unexpected error occurred:', error);
+      }
+    } 
+    setUrlInput(event.target.value);
+  }
+
+  const handleURLDoneTyping = () => {
+
+  }
+
+  const pictorProject = () => {
+    return (
+      <ProjectDiv>
+        <h1>Pictor</h1>
+        <p>A web app for creating glitch art using a concept called pixel sorting. Users can experiment with several different settings to create unique visual effects.</p>
+       <ProjectLinkDiv>
+        <Link to="/pictor">Pictor</Link>
+       </ProjectLinkDiv>
+      </ProjectDiv>
+    )
+  }
+
+  const croidsProject = () => {
+    return (
+      <ProjectDiv>
+        <h1>Croids</h1>
+        <p>My take on the classic artificial life simulation, <a target="_blank" rel="noreferrer" href='http://www.red3d.com/cwr/boids/'>Boids</a>, developed by Craig Reynolds.</p>
+        <p>But, since I live in Vancouver and have always loved our <a target="_blank" rel="noreferrer" href='https://www.thenatureofcities.com/2019/04/26/crows-vancouver-middle-way-biophobia-biophilia/'>giant crow population</a>, I decided to make them crows instead.</p>
+        <p>Crows, Boids ... Croids</p>
+      </ProjectDiv>
+    )
+  }
+
+  const screenSmashProject = () => {
+    return (
+      <ScreenSmashDiv>
+        <h1>Screen Smasher</h1>
+        <p>Notice that big red button over to the right? Try pressing it for some cathartic fun. You can find this button on almost any page of this site.</p> 
+        <p>You can also try it on any url you want here: </p>
+        <p>(Beta feature, may not work correctly or at all on some urls) </p>
+        <div>
+        <br/>
+        <TextField 
+          label="URL"
+          variant="outlined"
+          value={urlInput}
+          onChange={handleURLChange}
+          onBlur={handleURLDoneTyping} // Trigger setURL when user finishes typing
+          InputProps={{
+            style: { overflow: 'hidden' } // Set width to 100%
+          }}
+        />
+        <br/>
+        {urlInput && urlWarning === '' && <URLLink to={`/screen?url=${encodeURIComponent(urlInput)}`}>GO!</URLLink>}
+        {urlInput !== '' && <span>{urlWarning}</span>}
+        </div>
+        {urlParameter && urlParameter !== 'https://example.com/' && (
+          <>
+            <p>Or, try it out on your own company's website</p>
+            <Link to={`/screen?url=${encodeURIComponent(urlParameter)}`}>{urlParameter}</Link>
+          </>
+        )
+        }
+        <p>What was the point of making this you ask? Well ... why not?</p>
+      </ScreenSmashDiv>
+    )
+  }
+
+  const neoWiseProject = () => {
+    return (
+      <ProjectDiv>
+        <h1>NeoWise</h1>
+        <p>A game being developed for mobile devices. Still early in development.</p>
+        <p>Named after NASA's <a target="_blank" rel="noreferrer" href='https://www.jpl.nasa.gov/missions/neowise'>NEOWISE</a> mission to find <b>N</b>ear <b>E</b>arth <b>O</b>bjects that may pose a threat to Earth.</p>
+ 
+        <ProjectLinkDiv>
+          <Link to="/neowise">NeoWise Game</Link>
+        </ProjectLinkDiv>
+      </ProjectDiv> 
+    )
+  }
+
   const renderProjects = () => {
 
     return (
-      <>
-        <ProjectDiv>
-          <h1>Pictor</h1>
-          <p>A web app for creating glitch art using a concept called pixel sorting. Users can experiment with several different settings to create unique visual effects.</p>
-          <Link to="/pictor">Pictor</Link>
-        </ProjectDiv>
-        <ProjectDiv>
-          <h1>Screen Smasher</h1>
-          <p>Notice that big red button over to the right? Try pressing it for some cathartic fun. You can find this button on almost any page of this site.</p> 
-          </ProjectDiv>
-        <ProjectDiv>
-          <h1>NeoWise</h1>
-          <p>A game being developed for mobile devices, a personal project of mine. Still early in development.</p>
-          <Link to="/neowise">NeoWise</Link>
-        </ProjectDiv> 
-      </>
-    )
-
+      <Projects> 
+        {pictorProject()}
+        {screenSmashProject()}
+        {neoWiseProject()}
+        {croidsProject()}
+      </Projects>
+    ) 
   }
 
   const renderInfo = () => {
@@ -273,9 +439,9 @@ const Home = (props: HomeProps) => {
     return (
       <InfoP>
         <p>joeyparker47@gmail.com </p>
-        <p>Based in Vancouver, BC</p> 
-        {coverLetter && <Button onClick={() => {setPDF(coverLetter); handleScrollToPDF()}}>Cover Letter</Button>}
-        <Button onClick={() => {setPDF(resume_pdf); handleScrollToPDF()}}>Resume</Button>  
+        <p>Based in Vancouver, BC</p>  
+        <div>{coverLetter && <Button onClick={() => {setPDF(coverLetter); handleScrollToPDF()}}>Cover Letter</Button>}</div>
+        <div><Button onClick={() => {setPDF(resume_pdf); handleScrollToPDF()}}>Résumé</Button></div>
       </InfoP> 
     )
 
@@ -289,6 +455,8 @@ const Home = (props: HomeProps) => {
         return renderProjects();
       case ContentPage.INFO:
         return renderInfo();
+      case ContentPage.BIRDS:
+        return <></>;
       default:
         return <></>;
     }
@@ -300,13 +468,10 @@ const Home = (props: HomeProps) => {
       <AppContainer>
         <StyledContainer>
           <Grid container spacing={3}>
-            <Grid item>
-                <Title variant="h3">Joseph Parker</Title>
-                <Subtitle variant="h6">Software Developer</Subtitle>
-            </Grid>
-          </Grid>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={3}>
+            <Grid item> 
+              {/* Title */} 
+              <Title variant="h3">Joseph Parker</Title>
+              <Subtitle variant="h6">Software Developer</Subtitle> 
               {/* Button List */} 
                 <ContentList>
                   {Object.values(ContentPage).map((page, index) => (
@@ -319,14 +484,13 @@ const Home = (props: HomeProps) => {
                     </ContentItem>
                     )
                   ))}
-                </ContentList>   
-
-            </Grid>
-            <Grid item xs={12} md={9}>
+                </ContentList>    
+            </Grid>   
+            <Grid item xs={12} md={9}> 
               {/* Content */}  
               <ContentDiv>
                 {renderContent()}
-              </ContentDiv> 
+              </ContentDiv>  
             </Grid> 
           </Grid>
         </StyledContainer>
@@ -334,7 +498,7 @@ const Home = (props: HomeProps) => {
 
       <PDFButtons ref={pdfRef}>
         {coverLetter && <Button onClick={() => setPDF(coverLetter)}>Cover Letter</Button>}
-        <Button onClick={() => setPDF(resume_pdf)}>Resume</Button>
+        <Button onClick={() => setPDF(resume_pdf)}>Résumé</Button>
         <Button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Scroll to Top</Button>
       </PDFButtons> 
       
