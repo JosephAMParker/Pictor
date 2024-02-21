@@ -43,7 +43,7 @@ def get_company_site(company):
         'D-Wave': 'https://www.dwavesys.com/',
         'Pacific Salmon Foundation': 'https://psf.ca/about/#av_section_3',
         'Stripe':'https://stripe.com/en-ca',
-        'Khan Academy':'https://www.khanacademy.org/',
+        'Khan Academy':'https://blog.khanacademy.org/computing/',
     }
     return user_site_mapping.get(company, 'https://example.com/') 
 
