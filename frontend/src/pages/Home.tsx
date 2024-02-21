@@ -8,6 +8,7 @@ import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import PDFRenderer from '../util/PDFRenderer'; 
 import Animate from '../animate/Animate';
+import BlackHole from '../blackhole/BlackHole';
 
 let theme = createTheme({
   palette: {
@@ -303,9 +304,10 @@ const Home = (props: HomeProps) => {
         {message && company && ( 
           <>
             <p>Hello Hiring team for {company}! <br /> 
-               Welcome to my site. You can check out some of my projects from the menu on the left in the 'Projects' tab, <br/>
-               In 'Info' you will find my Résumé and Cover Letter for my application to the {jobTitle} position.
+               Welcome to my site. You can find some of my projects from the menu on the left in the 'Projects' tab, <br/>
+               And in 'Info' you will find my Resume and my Cover Letter for my application to the {jobTitle} position.
             </p>  
+            <p>Enjoy your stay and I hope I will be hearing from you soon!</p>
           </>
         )}
       </>
@@ -441,7 +443,7 @@ const Home = (props: HomeProps) => {
         <p>joeyparker47@gmail.com </p>
         <p>Based in Vancouver, BC</p>  
         <div>{coverLetter && <Button onClick={() => {setPDF(coverLetter); handleScrollToPDF()}}>Cover Letter</Button>}</div>
-        <div><Button onClick={() => {setPDF(resume_pdf); handleScrollToPDF()}}>Résumé</Button></div>
+        <div><Button onClick={() => {setPDF(resume_pdf); handleScrollToPDF()}}>Resume</Button></div>
       </InfoP> 
     )
 
@@ -498,7 +500,7 @@ const Home = (props: HomeProps) => {
 
       <PDFButtons ref={pdfRef}>
         {coverLetter && <Button onClick={() => setPDF(coverLetter)}>Cover Letter</Button>}
-        <Button onClick={() => setPDF(resume_pdf)}>Résumé</Button>
+        <Button onClick={() => setPDF(resume_pdf)}>Resume</Button>
         <Button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Scroll to Top</Button>
       </PDFButtons> 
       
@@ -508,7 +510,10 @@ const Home = (props: HomeProps) => {
         <Button onClick={() => handleScrollToPDF()}>Scroll Up</Button>
       </PDFButtons> 
 
+      {/* <Animate />      */}
+
       <Animate />      
+       
     </ThemeProvider>
   );
 };

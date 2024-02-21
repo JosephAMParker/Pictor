@@ -52,7 +52,7 @@ def get_job_title(company):
         'D-Wave': 'feefef/',
         'Pacific Salmon Foundation': 'efefef',
         'Stripe':'efefef',
-        'Khan Academy':'efefef',
+        'Khan Academy':'Fullstack Engineer II',
         'Aspect Biosystems':'Fullstack Software Engineer'
     }
     return user_site_mapping.get(company, 'https://example.com/') 
@@ -62,7 +62,7 @@ def get_cover_letter_file_name(company):
         'D-Wave': 'D-Wave_CoverLetter.pdf',
         'Pacific Salmon Foundation': 'D-Wave_CoverLetter.pdf',
         'Stripe': 'D-Wave_CoverLetter.pdf',
-        'Khan Academy':'D-Wave_CoverLetter.pdf',
+        'Khan Academy':'Khan-Academy-CL.pdf',
         'Aspect Biosystems':'Aspect_Bio.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
