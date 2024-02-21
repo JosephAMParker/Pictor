@@ -25,6 +25,9 @@ def get_company_from_id(identifier):
         '844c86a': 'Stripe',
         '1e84da4': 'Khan Academy',
         'fb718d5': 'Aspect Biosystems',
+        'e8ee4fa': 'Tucows',
+        'e8e8ee7': 'Wavelo',
+
     }
     return user_mapping.get(identifier, 'UnknownUser')
 
@@ -34,7 +37,9 @@ def get_message(company):
         'Pacific Salmon Foundation': 'red fish',
         'Stripe':'banks',
         'Khan Academy':'school',
-        'Aspect Biosystems':'bio'
+        'Aspect Biosystems':'bio',
+        'Tucows':'Tucows',
+        'Wavelo':'Wavelo'
     }
     return user_message_mapping.get(company, 'Generic welcome message') 
 
@@ -53,7 +58,9 @@ def get_job_title(company):
         'Pacific Salmon Foundation': 'efefef',
         'Stripe':'efefef',
         'Khan Academy':'Fullstack Engineer II',
-        'Aspect Biosystems':'Fullstack Software Engineer'
+        'Aspect Biosystems':'Fullstack Software Engineer',
+        'Tucows':'Full Stack Engineer',
+        'Wavelo':'Software Engineer',
     }
     return user_site_mapping.get(company, 'https://example.com/') 
 
@@ -64,6 +71,8 @@ def get_cover_letter_file_name(company):
         'Stripe': 'D-Wave_CoverLetter.pdf',
         'Khan Academy':'Khan-Academy-CL.pdf',
         'Aspect Biosystems':'Aspect_Bio.pdf',
+        'Tucows':'Tucows Cover Letter.pdf',
+        'Wavelo':'Wavelo Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
