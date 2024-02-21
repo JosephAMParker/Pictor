@@ -16,7 +16,7 @@ const UserSetup: React.FC = () => {
             // Check if user_type already exists in local storage
             const existingUserType = localStorage.getItem('user_type') && localStorage.getItem('user_type') !== 'UnknownUser';
 
-            if (!existingUserType && user_id) {  
+            if (user_id) {  
 
                 const formData = new FormData(); 
                 formData.append('u', user_id.toString());

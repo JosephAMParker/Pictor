@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.1416a826.css",
-    "main.js": "/static/js/main.280ced51.js",
+    "main.js": "/static/js/main.d1ad4b7f.js",
     "static/js/787.a8f03a81.chunk.js": "/static/js/787.a8f03a81.chunk.js",
     "stardog2.jpeg": "/1a0a03f7df363f280cbda18a737f3896.jpeg",
     "wavy_sky_desert.jpeg": "/0092732451f1a981d2e008d8c28caa9b.jpeg",
@@ -13,11 +13,11 @@
     "humming_bird.jpg": "/c63d2372d56f953963cf44d2d3809d66.jpg",
     "index.html": "/index.html",
     "main.1416a826.css.map": "/static/css/main.1416a826.css.map",
-    "main.280ced51.js.map": "/static/js/main.280ced51.js.map",
+    "main.d1ad4b7f.js.map": "/static/js/main.d1ad4b7f.js.map",
     "787.a8f03a81.chunk.js.map": "/static/js/787.a8f03a81.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1416a826.css",
-    "static/js/main.280ced51.js"
+    "static/js/main.d1ad4b7f.js"
   ]
 }
