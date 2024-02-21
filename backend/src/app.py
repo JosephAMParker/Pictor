@@ -27,6 +27,7 @@ def get_company_from_id(identifier):
         'fb718d5': 'Aspect Biosystems',
         'e8ee4fa': 'Tucows',
         'e8e8ee7': 'Wavelo',
+        '9b0d1a2': 'Scribd',
 
     }
     return user_mapping.get(identifier, 'UnknownUser')
@@ -61,6 +62,7 @@ def get_job_title(company):
         'Aspect Biosystems':'Fullstack Software Engineer',
         'Tucows':'Full Stack Engineer',
         'Wavelo':'Software Engineer',
+        'Scribd':'Full stack Software Engineer'
     }
     return user_site_mapping.get(company, 'https://example.com/') 
 
@@ -73,6 +75,7 @@ def get_cover_letter_file_name(company):
         'Aspect Biosystems':'Aspect_Bio.pdf',
         'Tucows':'Tucows Cover Letter.pdf',
         'Wavelo':'Wavelo Cover Letter.pdf',
+        'Scribd':'Scribd Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
