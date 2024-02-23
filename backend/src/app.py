@@ -28,6 +28,7 @@ def get_company_from_id(identifier):
         'e8ee4fa': 'Tucows',
         'e8e8ee7': 'Wavelo',
         '9b0d1a2': 'Scribd',
+        '1234567': 'Test Company',
 
     }
     return user_mapping.get(identifier, 'UnknownUser')
@@ -40,7 +41,7 @@ def get_message(company):
         'Khan Academy':'school',
         'Aspect Biosystems':'bio',
         'Tucows':'Tucows',
-        'Wavelo':'Wavelo'
+        'Wavelo':'Wavelo',
     }
     return user_message_mapping.get(company, 'Generic welcome message') 
 
@@ -62,7 +63,8 @@ def get_job_title(company):
         'Aspect Biosystems':'Fullstack Software Engineer',
         'Tucows':'Full Stack Engineer',
         'Wavelo':'Software Engineer',
-        'Scribd':'Full stack Software Engineer'
+        'Scribd':'Full stack Software Engineer',
+        'Test Company': 'test job'
     }
     return user_site_mapping.get(company, 'https://example.com/') 
 
@@ -76,6 +78,7 @@ def get_cover_letter_file_name(company):
         'Tucows':'Tucows Cover Letter.pdf',
         'Wavelo':'Wavelo Cover Letter.pdf',
         'Scribd':'Scribd Cover Letter.pdf',
+        'Test Company':'Aspect_Bio.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
