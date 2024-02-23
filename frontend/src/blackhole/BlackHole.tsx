@@ -1,5 +1,18 @@
-import { styled } from '@mui/material';
+import { Slider, styled } from '@mui/material';
 import * as React from 'react';
+
+const ContainerDiv = styled('div')({
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    height: '100%',
+    position: 'fixed',
+    right: 50,
+    top: 0,
+    padding: '80px',
+    zIndex: 1000, // Ensure the slider is on top 
+});
 
 const CanvasDiv = styled('div')({
     pointerEvents: 'none', 
@@ -15,18 +28,49 @@ const CanvasDiv = styled('div')({
 const CanvasO = styled('canvas')({
     width:'inherit'
 })
+
 const BlackHole = () => { 
     
-    const [image, setImage] = React.useState<string | null>(null);
+    const imageName_template = 'boscaled_finalty.png';
+    const imageNames = React.useRef<string[]>([
+        '1' + imageName_template,
+        '5' + imageName_template, 
+        '15' + imageName_template, 
+        '25' + imageName_template, 
+        '35' + imageName_template, 
+        '45' + imageName_template, 
+        '55' + imageName_template, 
+        '65' + imageName_template,
+        '70' + imageName_template,
+        '75' + imageName_template,
+        '80' + imageName_template,
+        '85' + imageName_template,
+        '86' + imageName_template,
+        '87' + imageName_template,
+        '88' + imageName_template,
+        '89' + imageName_template,
+        '89.9' + imageName_template,
+      ]);
+    const [imageList, setImageList] = React.useState<string[]>([]);
+    const [imageIdx, setImageIdx] = React.useState(0)
     
     const canvasRef = React.useRef<HTMLCanvasElement>(null); 
     const animationRef = React.useRef(0) 
     
-    const canvasWidth = React.useRef(903);
-    const canvasHeight = React.useRef(451);
+    const canvasWidth = React.useRef(1366);
+    const canvasHeight = React.useRef(768);
     const zValues: number[][] = [];
 
-    React.useEffect(() => {    
+    React.useEffect(() => {  
+        
+        let idx = imageIdx
+        let flip = false
+        if (imageIdx > imageList.length){
+            idx  = imageList.length * 2 - imageIdx
+            flip = true 
+        }
+        const image = imageList[idx]
+        console.log(imageIdx)
 
         if (!image){
             return
@@ -61,29 +105,33 @@ const BlackHole = () => {
                     
                     for (let y = 0; y < canvas.height; y++) {
                         for (let x = 0; x < canvas.width; x++) {  
-                            const index = (y * canvas.width + x) * 4; // Each pixel is represented by 4 values (RGBA)
+                            let _y = y
+                            if (flip){
+                                _y = canvas.height - y - 1;
+                            }
+                            const index = (_y * canvas.width + x) * 4; // Each pixel is represented by 4 values (RGBA)
                             const random = Math.random();
                             const imageValue = 8
-                            const an = bhImageData.data[index]
+                            const an = bhImageData.data[index] * 1.2 + 10
                             // Determine color based on random value and image pixel value
-                            const color =  (an*1 + 10)+10
+                            const color = (an)
                 
                             // Set pixel color in the image data
-                            
-                            imageData.data[index] = color; // Red
-                            imageData.data[index + 1] = color; // Green
-                            imageData.data[index + 2] = color; // Blue
-                            imageData.data[index + 3] = 255; // Alpha (fully opaque)
+                            const index2 = (y * canvas.width + x) * 4;
+                            imageData.data[index2] = color; // Red
+                            imageData.data[index2 + 1] = color; // Green
+                            imageData.data[index2 + 2] = color; // Blue
+                            imageData.data[index2 + 3] = 255; // Alpha (fully opaque)
 
                         }
                     }
 
                     // Put the modified pixel data back to the canvas
                     ctx.putImageData(imageData, 0, 0);
-                    const frameDuration = 1000/12
-                    const animationTimer = setTimeout(() => {
-                        animationRef.current = requestAnimationFrame((t) => animate(t, time));
-                      }, frameDuration);
+                    const frameDuration = 1000/6
+                    const animationTimer = setTimeout(() => { 
+                        // animationRef.current = requestAnimationFrame((t) => animate(t, time));
+                    }, frameDuration);
                     
                 };
                 ctx.fillStyle = 'rgba(0, 0, 0, 255)'; // Fully opaque black color
@@ -93,58 +141,69 @@ const BlackHole = () => {
                 animate(performance.now(), performance.now()); // Start the animation loop
                 
                 img.src = image;
-            }
-
-            const handleMouseDown = (event: MouseEvent) => {
-                if (!(event.buttons === 1)) return;
-                // setAvoidPoint([event.x, event.y]) 
-            }
-            const handleMouseUp = () => {
-                // setAvoidPoint([]) 
-            }
-
-            document.addEventListener('mousedown', handleMouseDown);
-            // document.addEventListener('mousemove', handleMouseDown);
-            document.addEventListener('mouseleave', handleMouseUp);
-            document.addEventListener('mouseup', handleMouseUp);
-
-        
-            // Cleanup function
-            return () => {
-                document.removeEventListener('mousedown', handleMouseDown);
-                // document.removeEventListener('mousemove', handleMouseDown); 
-                document.removeEventListener('mouseleave', handleMouseUp);
-                document.removeEventListener('mouseup', handleMouseUp);
-                cancelAnimationFrame(animationRef.current);
-            };
-
+            } 
         };
         img.src = image;
 
-      }, [image]);
-
+      }, [imageList, imageIdx]);
 
     React.useEffect(() => {
-        const loadImage = async () => {
+        const handleMouseDown = (event: MouseEvent) => {
+            if (!(event.buttons === 1)) return;  
+        } 
+
+        document.addEventListener('mousedown', handleMouseDown);   
+        // Cleanup function
+        return () => {
+            document.removeEventListener('mousedown', handleMouseDown);  
+            cancelAnimationFrame(animationRef.current);
+        };
+    },[])
+
+
+    React.useEffect(() => {  
+
+          const loadImageList = async (imageNames: string[]) => {
             try {
-              const response = await fetch(process.env.PUBLIC_URL + 'blackhole/bh1.png');
-              if (!response.ok) {
-                throw new Error('Failed to load image');
-              }
-              const blob = await response.blob();
-              setImage(URL.createObjectURL(blob));
+              const promises = imageNames.map(async (imageName) => {
+                const response = await fetch(`${process.env.PUBLIC_URL}/blackhole/${imageName}`);
+                if (!response.ok) {
+                  throw new Error(`Failed to load image ${imageName}`);
+                }
+                const blob = await response.blob();
+                return URL.createObjectURL(blob);
+              });
+        
+              const imageUrls = await Promise.all(promises);
+              setImageList(imageUrls);
             } catch (error) {
-              console.error('Error loading image:', error);
+              console.error('Error loading images:', error);
             }
           };
       
-          loadImage();
+          loadImageList(imageNames.current);
     },[])
+
+    const handleSliderChange = (event: Event, value: number | number[]) => {
+        setImageIdx(value as number);
+    };
     
     return (  
-        <CanvasDiv id="black-hole-div">
-            <CanvasO ref={canvasRef} width={canvasWidth.current} height={canvasHeight.current}></CanvasO>
-        </CanvasDiv> 
+        <>
+            <CanvasDiv id="black-hole-div">
+                <CanvasO ref={canvasRef} width={canvasWidth.current} height={canvasHeight.current}></CanvasO>
+            </CanvasDiv> 
+            <ContainerDiv>
+                <Slider
+                    orientation="vertical"
+                    min={0}
+                    max={imageNames.current.length*2 - 1}
+                    value={imageIdx}
+                    onChange={handleSliderChange}
+                    aria-label="Image Slider"
+                />
+            </ContainerDiv>
+        </>
     );
 };
 
