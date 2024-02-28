@@ -65,7 +65,9 @@ def get_job_title(company):
         'Tucows':'Full Stack Engineer',
         'Wavelo':'Software Engineer',
         'Scribd':'Full stack Software Engineer',
-        'Test Company': 'test job'
+        'DataVisor':'Software Engineer',
+        'Test Company': 'test job',
+        
     }
     return user_site_mapping.get(company, 'https://example.com/') 
 
