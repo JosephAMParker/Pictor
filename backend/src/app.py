@@ -27,7 +27,8 @@ def get_company_from_id(identifier):
         'fb718d5': 'Aspect Biosystems',
         'e8ee4fa': 'Tucows',
         'e8e8ee7': 'Wavelo',
-        '9b0d1a2': 'Scribd',
+        '9b0d1a2': 'Scribd', 
+        '8e3fcf7': 'DataVisor',
         '1234567': 'Test Company',
 
     }
@@ -79,6 +80,7 @@ def get_cover_letter_file_name(company):
         'Wavelo':'Wavelo Cover Letter.pdf',
         'Scribd':'Scribd Cover Letter.pdf',
         'Test Company':'Aspect_Bio.pdf',
+        'DataVisor':'DataVisor Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
