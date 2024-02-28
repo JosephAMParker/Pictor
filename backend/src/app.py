@@ -29,6 +29,7 @@ def get_company_from_id(identifier):
         'e8e8ee7': 'Wavelo',
         '9b0d1a2': 'Scribd', 
         '8e3fcf7': 'DataVisor',
+        '61926ea': 'Replicant Inc',
         '1234567': 'Test Company',
 
     }
@@ -66,6 +67,7 @@ def get_job_title(company):
         'Wavelo':'Software Engineer',
         'Scribd':'Full stack Software Engineer',
         'DataVisor':'Software Engineer',
+        'Replicant Inc':'Software Engineer',
         'Test Company': 'test job',
         
     }
@@ -83,6 +85,7 @@ def get_cover_letter_file_name(company):
         'Scribd':'Scribd Cover Letter.pdf',
         'Test Company':'Aspect_Bio.pdf',
         'DataVisor':'DataVisor Cover Letter.pdf',
+        'Replicant Inc':'Replicant Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
