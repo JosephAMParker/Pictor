@@ -374,7 +374,7 @@ const Home = (props: HomeProps) => {
         <br/>
         <p>Images are pre generated using python and presented in a React app here:</p>
        <ProjectLinkDiv>
-        <Link to="/blackhole">Luminet's black hole</Link>
+        <Link to="/luminet">Luminet's black hole</Link>
         
        </ProjectLinkDiv>
       </ProjectDiv>

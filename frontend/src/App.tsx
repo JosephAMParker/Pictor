@@ -46,7 +46,7 @@ export default function App() {
           <Route path="pictor" element={<Pictor />} />
           <Route path="neowise" element={<Neowise />} />
           <Route path="screen" element={<SiteSmash />} /> 
-          <Route path="blackhole" element={<Luminet />} />
+          <Route path="luminet" element={<Luminet />} />
         </Routes>
       </BrowserRouter>
     </>
