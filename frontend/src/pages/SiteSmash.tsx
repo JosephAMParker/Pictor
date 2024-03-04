@@ -1,7 +1,7 @@
 import * as React from 'react';
 import axios from 'axios';
 import { apiUrl } from '../Constants';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, TextField } from '@mui/material';
 import styled from 'styled-components';
 
 const LoadingOverlay = styled('div')({
@@ -22,9 +22,18 @@ const LoadingOverlay = styled('div')({
   },
 });
 
+const ErrorDiv = styled('div')({
+  position: 'absolute',
+  textAlign: 'center',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+});
+
 
 const SiteSmash: React.FC = () => {
   const [loading, setLoading] = React.useState(false);
+  const [hasError, setHasError] = React.useState(false);
   const [screenshot, setScreenshot] = React.useState('');
   const [siteUrl, setSiteUrl] = React.useState('');  
 
@@ -43,7 +52,8 @@ const SiteSmash: React.FC = () => {
         setScreenshot(imageUrl);
         setLoading(false)
       } catch (error) {
-        console.error('Error:', error);
+        setLoading(false)
+        setHasError(true)
       }
     };
     captureScreenshot();
@@ -71,9 +81,19 @@ const SiteSmash: React.FC = () => {
           </div>
         </LoadingOverlay>
         }
-      <div style={{ width: '100%', height: '100vh' }}>
-        {screenshot && <img src={screenshot} alt="Screenshot" />}
-      </div>
+        {hasError && 
+          <ErrorDiv>
+            <p>Sorry, this site does not seem to be working.</p>
+            <p>Please check if you've entered the correct URL.</p>
+            <p>If the URL uses HTTP, try replacing it with HTTPS, or vice versa.</p>
+            <p>If the problem persists, please try a different URL.</p>
+          </ErrorDiv>
+        }
+        {!hasError && 
+          <div style={{ width: '100%', height: '100vh' }}>
+            {screenshot && <img src={screenshot} alt="Screenshot" />}
+          </div>
+        }
     </>
   );
 };

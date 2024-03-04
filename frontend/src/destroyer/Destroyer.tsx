@@ -189,8 +189,7 @@ const Destroyer = () => {
             const x = e.clientX - canvas.getBoundingClientRect().left;
             const y = e.clientY - canvas.getBoundingClientRect().top;
         
-            const crackImage = new Image();
-            crackImage.src = process.env.PUBLIC_URL + 'glass/crack1.png'
+            const crackImage = new Image(); 
         
             crackImage.onload = () => {
                 // Calculate the position to center the image at the click coordinates
@@ -217,10 +216,14 @@ const Destroyer = () => {
                 context.lineWidth = 2; 
                 context.strokeRect(0, 0, canvas.width, canvas.height);
             }; 
+
+            crackImage.src = process.env.PUBLIC_URL + '/glass/crack1.png'
+            console.log(crackImage)
         }
 
         function checkCracks() {
-            const worker = new Worker('glassWorker.js', { type : 'module' } );
+            console.log(process.env.PUBLIC_URL + '/glassWorker.js')
+            const worker = new Worker(process.env.PUBLIC_URL + '/glassWorker.js', { type : 'module' } );
             const canvas = canvasRef.current
             const ctx = canvas?.getContext('2d');
 

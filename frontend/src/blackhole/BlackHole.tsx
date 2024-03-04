@@ -1,171 +1,340 @@
-import { Slider, styled } from '@mui/material';
 import * as React from 'react';
+import { Button, ButtonGroup, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Slider, ThemeProvider, createTheme, styled } from '@mui/material';
+import { green, lightGreen } from '@mui/material/colors';
 
-const ContainerDiv = styled('div')({
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    height: '100%',
-    position: 'fixed',
-    right: 50,
-    top: 0,
-    padding: '80px',
-    zIndex: 1000, // Ensure the slider is on top 
+const defaultTheme = createTheme({
+    palette: {
+        mode: 'dark',
+        primary: green,
+        secondary: lightGreen,
+    },
 });
 
-const CanvasDiv = styled('div')({
-    pointerEvents: 'none', 
-    position: 'absolute',
-    top:20,
-    left:20,
-    zIndex:2,
-    width:window.innerWidth-40,
-    // height:window.innerHeight-40,
-    height:'100%'
-})  
+const SliderDiv = styled('div')({ 
+    height:'100%',  
+}); 
 
-const CanvasO = styled('canvas')({
-    width:'inherit'
+const PhysicsLabel = styled(FormLabel)({
+    'white-space': 'nowrap'
 })
+
+const PageContainer = styled('div')({
+    height: '100vh',
+    backgroundColor:'black',  
+});
+
+const ControlPanel = styled('div')({ 
+    height: '100%',
+    display: 'flex', 
+    'flex-direction': 'column',  
+    'min-width': '150px',
+});
+ 
+const GridContainer = styled(Grid)({ 
+    height:'100%',
+    padding:'20px'
+})
+
+const CheckBoxContainer = styled(Grid)({ 
+    height:'100%', 
+})
+
+const RadioFormControl = styled(FormControl)({ 
+    color:'white',
+    paddingTop:'20px'
+}) 
+
+enum HighlightState {
+    NONE = 'none',
+    PRIMARY = 'primary',
+    GHOST = 'ghost',
+} 
 
 const BlackHole = () => { 
     
-    const imageName_template = 'boscaled_finalty.png';
-    const imageNames = React.useRef<string[]>([
-        '1' + imageName_template,
-        '5' + imageName_template, 
-        '15' + imageName_template, 
-        '25' + imageName_template, 
-        '35' + imageName_template, 
-        '45' + imageName_template, 
-        '55' + imageName_template, 
-        '65' + imageName_template,
-        '70' + imageName_template,
-        '75' + imageName_template,
-        '80' + imageName_template,
-        '85' + imageName_template,
-        '86' + imageName_template,
-        '87' + imageName_template,
-        '88' + imageName_template,
-        '89' + imageName_template,
-        '89.9' + imageName_template,
-      ]);
-    const [imageList, setImageList] = React.useState<string[]>([]);
-    const [imageIdx, setImageIdx] = React.useState(0)
+    const bh_template = 'bh-';
+    const pr_template = 'primary-';
+    const gh_template = 'ghost-';
+    const ri_template = 'ring-';
+    const ne_template = 'newtonian-';
+    const extension = '.png';
+    const imageNumbers = [
+        '1',
+        '5', 
+        '15',
+        '25',
+        '35',
+        '45',
+        '55',
+        '65',
+        '70',
+        '75',
+        '80',
+        '85',
+        '86',
+        '87',
+        '88',
+        '89',
+        '89.9',
+    ]
+    const marks = [ 
+        {
+            value: 33,
+            label: '90°',
+        },
+        {
+            value: 32,
+            label: '85°',
+        },
+        {
+            value: 31,
+            label: '75°',
+        },
+        {
+            value: 30,
+            label: '65°',
+        },
+        {
+            value: 29,
+            label: '55°',
+        },
+        {
+            value: 28,
+            label: '45°',
+        },
+        {
+            value: 27,
+            label: '35°',
+        },
+        {
+            value: 26,
+            label: '25°',
+        },
+        {
+            value: 25,
+            label: '20°',
+        },
+        {
+            value: 24,
+            label: '15°',
+        },
+        {
+            value: 23,
+            label: '10°',
+        },
+        {
+            value: 22,
+            label: '5°',
+        },
+        {
+            value: 21,
+            label: '4°',
+        },
+        {
+            value: 20,
+            label: '3°',
+        },
+        {
+            value: 19,
+            label: '2°',
+        },
+        {
+            value: 18,
+            label: '1°',
+        },
+        {
+            value: 17,
+            label: '0.1°',
+        },
+        {
+            value: 16,
+            label: '-0.1°',
+        }, 
+        {
+            value: 11,
+            label: '-5°', 
+        },
+        {
+            value: 5,
+            label: '-45°', 
+        },
+        {
+            value: 0,
+            label: '90°', 
+        },
+    ];
+
+    const imageNames = React.useRef<string[]>(imageNumbers.map  (n => bh_template + n + extension)) 
+    const newtNames = React.useRef<string[]>(imageNumbers.map   (n => ne_template + n + extension))
+    const ghostNames = React.useRef<string[]>(imageNumbers.map  (n => gh_template + n + extension))
+    const primaryNames = React.useRef<string[]>(imageNumbers.map(n => pr_template + n + extension))  
+
+    const [mainImageList, setMainImageList] = React.useState<string[]>([]);
+    const [ghostList, setGhostList] = React.useState<string[]>([]); 
+    const [primaryList, setPrimaryList] = React.useState<string[]>([]);
+    const [newtonianList, setNewtonianList] = React.useState<string[]>([]);  
+    const [imageIdx, setImageIdx] = React.useState(11)
+
+    const [highlight, setHighlight] = React.useState(HighlightState.NONE);
+    const [showNewtonian, setShowNewtonian] = React.useState(false);
     
     const canvasRef = React.useRef<HTMLCanvasElement>(null); 
     const animationRef = React.useRef(0) 
     
-    const canvasWidth = React.useRef(1366);
-    const canvasHeight = React.useRef(768);
-    const zValues: number[][] = [];
+    const canvasWidth = React.useRef(1206);
+    const canvasHeight = React.useRef(678); 
+
+    const [canvasDimensions, setCanvasDimensions] = React.useState({ width: 0, height: 0 });
+
+    React.useEffect(() => {
+        const updateCanvasDimensions = () => {
+            const maxWidth = window.innerWidth - 40;
+            const maxHeight = window.innerHeight - 40;
+
+            const aspectRatio = canvasWidth.current / canvasHeight.current; // Aspect ratio of your image
+
+            let newWidth = maxWidth;
+            let newHeight = newWidth / aspectRatio;
+
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight;
+                newWidth = newHeight * aspectRatio;
+            }
+
+            newWidth  = Math.max(1, newWidth)
+            newHeight = Math.max(1, newHeight)
+
+            setCanvasDimensions({ width: newWidth, height: newHeight });
+        };
+    
+        updateCanvasDimensions();
+    
+        window.addEventListener('resize', updateCanvasDimensions);
+    
+        return () => {
+            window.removeEventListener('resize', updateCanvasDimensions);
+        };
+    }, []);
 
     React.useEffect(() => {  
         
         let idx = imageIdx
         let flip = false
-        if (imageIdx > imageList.length){
-            idx  = imageList.length * 2 - imageIdx
-            flip = true 
+        let imageList
+        if (showNewtonian){
+            imageList = newtonianList
+        } else{
+            imageList = mainImageList
         }
-        const image = imageList[idx]
-        console.log(imageIdx)
+        if (imageIdx > imageList.length - 1){
+            idx  = imageList.length * 2 - imageIdx - 1
+            flip = true 
+        } 
+
+        const image = imageList[idx] 
+
+        let secondImage
+        switch (highlight) {
+            case HighlightState.PRIMARY:
+                secondImage = primaryList[idx]  
+                break;
+            case HighlightState.GHOST:
+                secondImage = ghostList[idx]  
+                break;
+        } 
 
         if (!image){
             return
-        }
+        } 
 
         const img = new Image();
-        img.onload = () => {
+        const second_img = new Image(); 
 
+        const loadAndDrawOneImage = () => {
+            const canvas = canvasRef.current;
+            const ctx = canvas?.getContext('2d');
+            if (!ctx || !canvas){
+                return
+            } 
+            let startHeight = 0
+            if (flip){ 
+                ctx.save(); 
+                ctx.scale(1,-1) 
+                startHeight = -canvas.height
+            }
+            ctx.drawImage(img, 0, startHeight, canvas.width, canvas.height);
+            ctx.restore(); 
+        }
+
+        const loadAndDrawImages = () => {
+            const bothLoaded = img.complete && second_img.complete
             const canvas = canvasRef.current;
             const ctx = canvas?.getContext('2d');
 
-            const imgCanvas = document.createElement('canvas');
-            imgCanvas.width = img.width;
-            imgCanvas.height = img.height;
-            const imgCtx = imgCanvas.getContext('2d')
-            imgCtx?.drawImage(img, 0, 0, img.width, img.height);
-            const bhImageData = imgCtx?.getImageData(0,0,img.width, img.height);
+            const greenOverlay=document.createElement('canvas');
+            const greenCtx=greenOverlay.getContext('2d');
 
-            if (ctx && canvas && bhImageData){ 
-            
-                const animate = (time:number, prevTime:number) => {
+            const colorOverlay=document.createElement('canvas');
+            const colorCtx=colorOverlay.getContext('2d');
 
-                    const elapsedTime = (time - prevTime) / 17
+            if (!ctx || !canvas || !bothLoaded || !greenCtx || !colorCtx){
+                return
+            }  
+            let startHeight = 0
+            if (flip){ 
+                ctx.save();
+                greenCtx.save();
+                ctx.scale(1,-1)
+                greenCtx.scale(1,-1)
+                startHeight = -canvas.height
+            }
+            ctx.drawImage(img, 0, startHeight, canvas.width, canvas.height);
 
-                    if (document.hidden) {
-                        animationRef.current = requestAnimationFrame((t) => animate(t, time));
-                        return
-                    }
+            // colorOverlay.width=img.width;
+            // colorOverlay.height=img.height;
+            // colorCtx.drawImage(img,0,0);
+            // colorCtx.globalCompositeOperation='source-atop';
+            // colorCtx.fillStyle='rgba(123, 22, 22, 1)';
+            // colorCtx.fillRect(0,0,img.width,img.height);  
+            // colorCtx.globalCompositeOperation='source-over'; 
 
-                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    const data = imageData.data;
-                    
-                    for (let y = 0; y < canvas.height; y++) {
-                        for (let x = 0; x < canvas.width; x++) {  
-                            let _y = y
-                            if (flip){
-                                _y = canvas.height - y - 1;
-                            }
-                            const index = (_y * canvas.width + x) * 4; // Each pixel is represented by 4 values (RGBA)
-                            const random = Math.random();
-                            const imageValue = 8
-                            const an = bhImageData.data[index] * 1.2 + 10
-                            // Determine color based on random value and image pixel value
-                            const color = (an)
-                
-                            // Set pixel color in the image data
-                            const index2 = (y * canvas.width + x) * 4;
-                            imageData.data[index2] = color; // Red
-                            imageData.data[index2 + 1] = color; // Green
-                            imageData.data[index2 + 2] = color; // Blue
-                            imageData.data[index2 + 3] = 255; // Alpha (fully opaque)
+            // ctx.globalCompositeOperation='color';  
+            // ctx.drawImage(colorOverlay, 0, startHeight); 
+            // ctx.globalCompositeOperation='source-over';  
 
-                        }
-                    }
+            greenOverlay.width=second_img.width;
+            greenOverlay.height=second_img.height;
+            greenCtx.drawImage(second_img,0,0);
+            greenCtx.globalCompositeOperation='source-atop';
+            greenCtx.fillStyle='rgba(3, 245, 3, 1)';
+            greenCtx.fillRect(0,0,second_img.width,second_img.height);  
+            greenCtx.globalCompositeOperation='source-over'; 
 
-                    // Put the modified pixel data back to the canvas
-                    ctx.putImageData(imageData, 0, 0);
-                    const frameDuration = 1000/6
-                    const animationTimer = setTimeout(() => { 
-                        // animationRef.current = requestAnimationFrame((t) => animate(t, time));
-                    }, frameDuration);
-                    
-                };
-                ctx.fillStyle = 'rgba(0, 0, 0, 255)'; // Fully opaque black color
-                ctx.fillRect(0, 0, canvas.width, canvas.height); 
-                const img = new Image();
-                
-                animate(performance.now(), performance.now()); // Start the animation loop
-                
-                img.src = image;
-            } 
-        };
-        img.src = image;
+            ctx.globalCompositeOperation='color';  
+            ctx.drawImage(greenOverlay, 0, startHeight, canvas.width, canvas.height);
+            ctx.globalCompositeOperation='source-over'; 
 
-      }, [imageList, imageIdx]);
+            ctx.restore();
+            greenCtx.restore();
+        }
 
-    React.useEffect(() => {
-        const handleMouseDown = (event: MouseEvent) => {
-            if (!(event.buttons === 1)) return;  
-        } 
+        if (secondImage) {
+            img.onload = second_img.onload = loadAndDrawImages;
+            img.src = image;
+            second_img.src = secondImage;
+        } else {
+            img.onload = loadAndDrawOneImage;
+            img.src = image; 
+        }  
 
-        document.addEventListener('mousedown', handleMouseDown);   
-        // Cleanup function
-        return () => {
-            document.removeEventListener('mousedown', handleMouseDown);  
-            cancelAnimationFrame(animationRef.current);
-        };
-    },[])
+      }, [mainImageList, newtonianList, imageIdx, ghostList, highlight, primaryList, canvasDimensions, showNewtonian]); 
 
 
     React.useEffect(() => {  
 
-          const loadImageList = async (imageNames: string[]) => {
+          const loadImageList = async () => {
             try {
-              const promises = imageNames.map(async (imageName) => {
+              const promises = imageNames.current.map(async (imageName) => {
                 const response = await fetch(`${process.env.PUBLIC_URL}/blackhole/${imageName}`);
                 if (!response.ok) {
                   throw new Error(`Failed to load image ${imageName}`);
@@ -173,37 +342,111 @@ const BlackHole = () => {
                 const blob = await response.blob();
                 return URL.createObjectURL(blob);
               });
-        
+
+              const ghostPromises = ghostNames.current.map(async (imageName) => {
+                const response = await fetch(`${process.env.PUBLIC_URL}/blackhole/${imageName}`);
+                if (!response.ok) {
+                  throw new Error(`Failed to load image ${imageName}`);
+                }
+                const blob = await response.blob();
+                return URL.createObjectURL(blob);
+              });
+
+              const primaryPromises = primaryNames.current.map(async (imageName) => {
+                const response = await fetch(`${process.env.PUBLIC_URL}/blackhole/${imageName}`);
+                if (!response.ok) {
+                  throw new Error(`Failed to load image ${imageName}`);
+                }
+                const blob = await response.blob();
+                return URL.createObjectURL(blob);
+              }); 
+
+              const newtonianPromises = newtNames.current.map(async (imageName) => {
+                const response = await fetch(`${process.env.PUBLIC_URL}/blackhole/${imageName}`);
+                if (!response.ok) {
+                  throw new Error(`Failed to load image ${imageName}`);
+                }
+                const blob = await response.blob();
+                return URL.createObjectURL(blob);
+              });
+              
               const imageUrls = await Promise.all(promises);
-              setImageList(imageUrls);
+              const ghostUrls = await Promise.all(ghostPromises); 
+              const primaryUrls = await Promise.all(primaryPromises); 
+              const newtonianUrls = await Promise.all(newtonianPromises);
+              setMainImageList(imageUrls);
+              setGhostList(ghostUrls);
+              setPrimaryList(primaryUrls);
+              setNewtonianList(newtonianUrls); 
+
             } catch (error) {
               console.error('Error loading images:', error);
             }
           };
       
-          loadImageList(imageNames.current);
+          loadImageList();
     },[])
 
     const handleSliderChange = (event: Event, value: number | number[]) => {
         setImageIdx(value as number);
-    };
+    }; 
     
     return (  
-        <>
-            <CanvasDiv id="black-hole-div">
-                <CanvasO ref={canvasRef} width={canvasWidth.current} height={canvasHeight.current}></CanvasO>
-            </CanvasDiv> 
-            <ContainerDiv>
-                <Slider
-                    orientation="vertical"
-                    min={0}
-                    max={imageNames.current.length*2 - 1}
-                    value={imageIdx}
-                    onChange={handleSliderChange}
-                    aria-label="Image Slider"
-                />
-            </ContainerDiv>
-        </>
+        <ThemeProvider theme={defaultTheme}>
+            <PageContainer> 
+                <GridContainer container spacing={0}> 
+                    <Grid item xs={1}>
+                        <ControlPanel>
+                            <CheckBoxContainer container spacing={0}> 
+                                <Grid item xs={6}>
+                                    <SliderDiv>
+                                        <Slider
+                                            orientation="vertical"
+                                            min={0}
+                                            max={imageNames.current.length*2 - 1}
+                                            value={imageIdx}
+                                            onChange={handleSliderChange}
+                                            aria-label="Image Slider"
+                                            marks={marks}
+                                        />
+                                    </SliderDiv>
+                                </Grid>
+                                <Grid item xs={6}> 
+                                    <PhysicsLabel id="Physics-Model">Physics Model</PhysicsLabel>
+                                    <ButtonGroup id="Physics-Model" variant="contained" aria-label="Basic button group">
+                                        <Button variant="contained" key="one" onClick={() => {setShowNewtonian((show) => !show);
+                                                                        setHighlight(HighlightState.NONE)}}>
+                                                        {showNewtonian ?  'Newtonian' : 'Einsteinian'}  
+                                        </Button>   
+                                    </ButtonGroup>
+                                    {!showNewtonian && 
+                                        <RadioFormControl>
+                                            <FormLabel id="highlight-radio-buttons-group-label">Highlight Image</FormLabel>
+                                            <RadioGroup
+                                                aria-labelledby="highlight-radio-buttons-group-label"
+                                                value={highlight}
+                                                onChange={(event) => {setHighlight(event.target.value as HighlightState)}}
+                                            >
+                                                <FormControlLabel value={HighlightState.NONE}    control={<Radio />} label="NONE" />
+                                                <FormControlLabel value={HighlightState.PRIMARY} control={<Radio />} label="PRIMARY" />
+                                                <FormControlLabel value={HighlightState.GHOST}   control={<Radio />} label="SECONDARY" />
+                                            </RadioGroup>
+                                        </RadioFormControl>
+                                    }
+
+                                </Grid>
+                            </CheckBoxContainer>
+                        </ControlPanel>
+                    </Grid>
+                
+                    <Grid item xs={8}>
+                        <div id="black-hole-div"> 
+                            <canvas ref={canvasRef} width={canvasDimensions.width} height={canvasDimensions.height}></canvas>
+                        </div>  
+                    </Grid>
+                </GridContainer> 
+            </PageContainer>
+        </ThemeProvider>
     );
 };
 

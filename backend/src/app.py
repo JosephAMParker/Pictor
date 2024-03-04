@@ -94,6 +94,8 @@ def get_company():
     try:
         user_identifier = request.form.get('u')
         company = get_company_from_id(user_identifier)  
+        with open('companies.txt', 'a') as file:
+            file.write(company + '\n') 
         return company
     except Exception as e:
         app.logger.error(f"Error: {str(e)}")   

@@ -7,8 +7,7 @@ import { Link } from 'react-router-dom';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import PDFRenderer from '../util/PDFRenderer'; 
-import Animate from '../animate/Animate';
-import BlackHole from '../blackhole/BlackHole';
+import Animate from '../animate/Animate'; 
 
 let theme = createTheme({
   palette: {
@@ -364,6 +363,24 @@ const Home = (props: HomeProps) => {
     )
   }
 
+  const blackHoleProject = () => {
+    return (
+      <ProjectDiv>
+        <h1>Luminet's Black hole</h1>
+        <p>An interactive implementation of Jean-Pierre Luminet's <a target="_blank" rel="noreferrer" href="https://articles.adsabs.harvard.edu/pdf/1979A%26A....75..228L#page=8">Image of a spherical black hole with thin accretion disk (1979).</a></p>
+        <p>The first "image" of a black hole, hand plotted by Luminet in 1979 with aid of a computer. 
+          In my implementation, users can view the blackhole from any inclination angle, 
+          as well as toggle between Einsteinian and Newtonian physics models and highlight select parts of the black hole to further help in understanding the image.</p>
+        <br/>
+        <p>Images are pre generated using python and presented in a React app here:</p>
+       <ProjectLinkDiv>
+        <Link to="/blackhole">Luminet's black hole</Link>
+        
+       </ProjectLinkDiv>
+      </ProjectDiv>
+    )
+  }
+
   const croidsProject = () => {
     return (
       <ProjectDiv>
@@ -429,8 +446,9 @@ const Home = (props: HomeProps) => {
     return (
       <Projects> 
         {pictorProject()}
-        {screenSmashProject()}
+        {blackHoleProject()} 
         {neoWiseProject()}
+        {screenSmashProject()}
         {croidsProject()}
       </Projects>
     ) 
@@ -510,9 +528,7 @@ const Home = (props: HomeProps) => {
         <Button onClick={() => handleScrollToPDF()}>Scroll Up</Button>
       </PDFButtons> 
 
-      {/* <Animate />      */}
-
-      <Animate />      
+      <Animate />           
        
     </ThemeProvider>
   );
