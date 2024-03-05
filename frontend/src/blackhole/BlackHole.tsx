@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, ButtonGroup, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Slider, ThemeProvider, createTheme, styled } from '@mui/material';
 import { green, lightGreen } from '@mui/material/colors';
 
+const overLayColor = 'rgba(3, 245, 3, 1)'
 const defaultTheme = createTheme({
     palette: {
         mode: 'dark',
@@ -306,7 +307,7 @@ const BlackHole = () => {
             greenOverlay.height=second_img.height;
             greenCtx.drawImage(second_img,0,0);
             greenCtx.globalCompositeOperation='source-atop';
-            greenCtx.fillStyle='rgba(3, 245, 3, 1)';
+            greenCtx.fillStyle=overLayColor;
             greenCtx.fillRect(0,0,second_img.width,second_img.height);  
             greenCtx.globalCompositeOperation='source-over'; 
 

@@ -177,6 +177,29 @@ export default function Dashboard(props:DashboardProps) {
 
   const drawingAppRef = React.useRef<any>(); 
 
+  // set initial image
+  useEffect(() => {
+
+    const imagePath = process.env.PUBLIC_URL + 'default.jpg'
+    async function fetchDefaultImage() {
+      try {
+        const response = await fetch(imagePath);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch image');
+        }
+
+        const blob = await response.blob();
+        const file = new File([blob], 'default.jpg', { type: 'image/jpeg' });
+
+        handleNewFile(file);
+      } catch (error) {
+        console.error('Error fetching default image:', error);
+      }
+    }
+    fetchDefaultImage()
+  },[])
+
   // Handle Pixel Sort
   const handlePixelSort = async () => { 
     
@@ -243,8 +266,14 @@ export default function Dashboard(props:DashboardProps) {
     }
   };
 
-  const handleFileChange = async (event : any) => {
-    const file = event.target.files[0];
+  const handleFileChange = (event : React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files){
+      const file = event.target.files[0];
+      handleNewFile(file)
+  }
+  }
+
+  const handleNewFile = async (file : File) => { 
 
     if (!file){
       return
