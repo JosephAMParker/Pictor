@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, ButtonGroup, FormControl, FormControlLabel, FormLabel, Grid, Modal, Radio, RadioGroup, Slider, ThemeProvider, Typography, createTheme, styled } from '@mui/material';
+import { Box, Button, ButtonGroup, CircularProgress, FormControl, FormControlLabel, FormLabel, Grid, Modal, Radio, RadioGroup, Slider, ThemeProvider, Typography, createTheme, styled } from '@mui/material';
 import { green, lightGreen } from '@mui/material/colors'; 
 import { Close } from '@mui/icons-material';
 
@@ -9,6 +9,24 @@ const defaultTheme = createTheme({
         mode: 'dark',
         primary: green,
         secondary: lightGreen,
+    },
+});
+
+const LoadingOverlay = styled('div')({
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(1, 1, 1, 1)', // Light grey with 100% opacity
+    zIndex: 10001, // Make sure the overlay is above other elements
+    display: 'flex',
+    flexDirection: 'column',  // Set the flex direction to column
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'white',
+    '& > div': {
+        marginBottom: '10px',  // Add some margin between the circular loading and the text
     },
 });
 
@@ -50,7 +68,9 @@ const RadioFormControl = styled(FormControl)({
 const AboutButtonGroup = styled(ButtonGroup)({  
     paddingBottom:'20px',
 })  
-
+const InfoModal = styled(Modal)({ 
+    zIndex: 10002
+}) 
 const ModalBox = styled(Box)({  
     position: 'absolute',
     top: '50%',
@@ -75,7 +95,9 @@ const ModalBox = styled(Box)({
 });
 
 const CloseButton = styled(Button)({ 
-
+    '& svg': {
+        'padding-bottom': '3px'
+    }
 })
 
 enum HighlightState {
@@ -136,6 +158,8 @@ const BlackHole = () => {
     const ghostNames = React.useRef<string[]>(imageNumbers.map  (n => gh_template + n + extension))
     const primaryNames = React.useRef<string[]>(imageNumbers.map(n => pr_template + n + extension))  
 
+    const [loading, setLoading] = React.useState(false);
+    
     const [mainImageList, setMainImageList] = React.useState<string[]>([]);
     const [ghostList, setGhostList] = React.useState<string[]>([]); 
     const [primaryList, setPrimaryList] = React.useState<string[]>([]);
@@ -365,6 +389,7 @@ const BlackHole = () => {
               const ghostUrls = await Promise.all(ghostPromises); 
               const primaryUrls = await Promise.all(primaryPromises); 
               const newtonianUrls = await Promise.all(newtonianPromises);
+              setLoading(false)
               setMainImageList(imageUrls);
               setGhostList(ghostUrls);
               setPrimaryList(primaryUrls);
@@ -374,7 +399,8 @@ const BlackHole = () => {
               console.error('Error loading images:', error);
             }
           };
-      
+          
+          setLoading(true)
           loadImageList();
     },[])
 
@@ -384,7 +410,17 @@ const BlackHole = () => {
     
     return (  
         <ThemeProvider theme={defaultTheme}>
-            <Modal
+            {loading && 
+                <LoadingOverlay>
+                    <div>
+                        <CircularProgress />
+                    </div>
+                    <div>
+                        Loading Images.
+                    </div>
+                </LoadingOverlay>
+            }
+            <InfoModal
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="about-modal"
@@ -426,7 +462,7 @@ const BlackHole = () => {
                     </CloseButton>
 
                 </ModalBox> 
-            </Modal>
+            </InfoModal>
             <PageContainer> 
                 <GridContainer container spacing={0}> 
                     <Grid item xs={1}>

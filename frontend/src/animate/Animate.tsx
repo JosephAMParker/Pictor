@@ -270,7 +270,7 @@ const mapPhaseValue = (value: number): number => {
     return mappedValue;
 };
 
-const NUMBER_OF_BOIDS = 107;
+const NUMBER_OF_BOIDS = 75;
 
 enum FollowMode {
     ONE_GROUP = "ONE_GROUP",

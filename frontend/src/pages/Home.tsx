@@ -368,7 +368,7 @@ const Home = (props: HomeProps) => {
       <ProjectDiv>
         <h1>Luminet's Black hole</h1>
         <p>An interactive implementation of Jean-Pierre Luminet's <a target="_blank" rel="noreferrer" href="https://articles.adsabs.harvard.edu/pdf/1979A%26A....75..228L#page=8">Image of a spherical black hole with thin accretion disk (1979).</a></p>
-        <p>The first "image" of a black hole, hand plotted by Luminet in 1979 with aid of a computer. 
+        <p>The first "image" of a black hole, hand plotted by Luminet in 1979 with the aid of an early computer. 
           In my implementation, users can view the blackhole from any inclination angle, 
           as well as toggle between Einsteinian and Newtonian physics models and highlight select parts of the black hole to further help in understanding the image.</p>
         <br/>
