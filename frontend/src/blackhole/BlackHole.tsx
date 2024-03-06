@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Button, ButtonGroup, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Slider, ThemeProvider, createTheme, styled } from '@mui/material';
-import { green, lightGreen } from '@mui/material/colors';
+import { Box, Button, ButtonGroup, FormControl, FormControlLabel, FormLabel, Grid, Modal, Radio, RadioGroup, Slider, ThemeProvider, Typography, createTheme, styled } from '@mui/material';
+import { green, lightGreen } from '@mui/material/colors'; 
+import { Close } from '@mui/icons-material';
 
 const overLayColor = 'rgba(3, 245, 3, 1)'
 const defaultTheme = createTheme({
@@ -42,8 +43,40 @@ const CheckBoxContainer = styled(Grid)({
 
 const RadioFormControl = styled(FormControl)({ 
     color:'white',
-    paddingTop:'20px'
+    paddingTop:'20px',
+    paddingBottom:'20px',
 }) 
+
+const AboutButtonGroup = styled(ButtonGroup)({  
+    paddingBottom:'20px',
+})  
+
+const ModalBox = styled(Box)({  
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '40vw',
+    maxHeight: '85vh', // Limiting the maximum height of the modal
+    backgroundColor: 'rgba(0, 0, 0, 0.75)', // Very dark color with 75% opacity
+    border: '2px solid #000',
+    boxShadow: '0px 0px 24px rgba(0, 0, 0, 0.5)',
+    color: '#4CAF50',
+    padding: '20px',
+    overflow: 'auto',
+    display: 'flex', // Adding flexbox properties
+    flexDirection: 'column', // Aligning items vertically
+    alignItems: 'center', // Centering items horizontally
+    '& img': {
+        maxWidth: '100%',
+        maxHeight: '100%', // Making sure the image fits within the modal
+        margin: '10px 0', // Adjusting margin for better spacing
+    },
+});
+
+const CloseButton = styled(Button)({ 
+
+})
 
 enum HighlightState {
     NONE = 'none',
@@ -51,12 +84,13 @@ enum HighlightState {
     GHOST = 'ghost',
 } 
 
+
 const BlackHole = () => { 
     
     const bh_template = 'bh-';
     const pr_template = 'primary-';
     const gh_template = 'ghost-';
-    const ri_template = 'ring-';
+    // const ri_template = 'ring-';
     const ne_template = 'newtonian-';
     const extension = '.png';
     const imageNumbers = [
@@ -78,92 +112,24 @@ const BlackHole = () => {
         '89',
         '89.9',
     ]
-    const marks = [ 
-        {
-            value: 33,
-            label: '90°',
-        },
-        {
-            value: 32,
-            label: '85°',
-        },
-        {
-            value: 31,
-            label: '75°',
-        },
-        {
-            value: 30,
-            label: '65°',
-        },
-        {
-            value: 29,
-            label: '55°',
-        },
-        {
-            value: 28,
-            label: '45°',
-        },
-        {
-            value: 27,
-            label: '35°',
-        },
-        {
-            value: 26,
-            label: '25°',
-        },
-        {
-            value: 25,
-            label: '20°',
-        },
-        {
-            value: 24,
-            label: '15°',
-        },
-        {
-            value: 23,
-            label: '10°',
-        },
-        {
-            value: 22,
-            label: '5°',
-        },
-        {
-            value: 21,
-            label: '4°',
-        },
-        {
-            value: 20,
-            label: '3°',
-        },
-        {
-            value: 19,
-            label: '2°',
-        },
-        {
-            value: 18,
-            label: '1°',
-        },
-        {
-            value: 17,
-            label: '0.1°',
-        },
-        {
-            value: 16,
-            label: '-0.1°',
-        }, 
-        {
-            value: 11,
-            label: '-5°', 
-        },
-        {
-            value: 5,
-            label: '-45°', 
-        },
-        {
-            value: 0,
-            label: '90°', 
-        },
-    ];
+
+    const marks = imageNumbers.map((number, index) => {
+        const value = 90 - parseFloat(number);
+        const label = value < 1 ? value.toFixed(1) : value;
+        return {
+            value: imageNumbers.length * 2 - index - 1,
+            label: `${label}°`,
+        };
+    });
+
+    marks.push(...imageNumbers.map((number, index) => {
+        const value = 90 - parseFloat(number);
+        const label = value < 1 ? value.toFixed(1) : value;
+        return {
+            value: index,
+            label: `${label}°`,
+        };
+    })) 
 
     const imageNames = React.useRef<string[]>(imageNumbers.map  (n => bh_template + n + extension)) 
     const newtNames = React.useRef<string[]>(imageNumbers.map   (n => ne_template + n + extension))
@@ -174,18 +140,42 @@ const BlackHole = () => {
     const [ghostList, setGhostList] = React.useState<string[]>([]); 
     const [primaryList, setPrimaryList] = React.useState<string[]>([]);
     const [newtonianList, setNewtonianList] = React.useState<string[]>([]);  
-    const [imageIdx, setImageIdx] = React.useState(11)
+    const [imageIdx, setImageIdx] = React.useState(10)
 
     const [highlight, setHighlight] = React.useState(HighlightState.NONE);
     const [showNewtonian, setShowNewtonian] = React.useState(false);
     
     const canvasRef = React.useRef<HTMLCanvasElement>(null); 
-    const animationRef = React.useRef(0) 
+    const [open, setOpen] = React.useState(true);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
     
     const canvasWidth = React.useRef(1206);
     const canvasHeight = React.useRef(678); 
 
     const [canvasDimensions, setCanvasDimensions] = React.useState({ width: 0, height: 0 });
+    React.useEffect(() => {
+
+        const handleScroll = (event: WheelEvent) => {
+
+            if (open){
+                return
+            }
+
+            if (event.deltaY < 0) { // Scrolling up
+                setImageIdx(prevIdx => Math.min(imageNames.current.length * 2, prevIdx + 1));
+            }
+            if (event.deltaY > 0) { // Scrolling up
+                setImageIdx(prevIdx => Math.max(0, prevIdx - 1));
+            }
+        };
+
+        window.addEventListener('wheel', handleScroll); // Listen for mouse scroll event
+
+        return () => {
+            window.removeEventListener('wheel', handleScroll); // Clean up event listener on component unmount
+        };
+    }, [open, imageNames.current.length]);
 
     React.useEffect(() => {
         const updateCanvasDimensions = () => {
@@ -389,11 +379,54 @@ const BlackHole = () => {
     },[])
 
     const handleSliderChange = (event: Event, value: number | number[]) => {
-        setImageIdx(value as number);
+        setImageIdx(value as number); 
     }; 
     
     return (  
         <ThemeProvider theme={defaultTheme}>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="about-modal"
+                aria-describedby="about-modal"
+                > 
+                <ModalBox>
+                    <Typography variant="h6" component="h2">
+                        Black Hole Visualization
+                    </Typography>
+                    <Typography sx={{ mt: 2 }}>
+                        An interactive implementation of Jean-Pierre Luminet's <a href="https://articles.adsabs.harvard.edu/pdf/1979A%2526A....75..228L" target="_blank" rel="noopener noreferrer">Image of a spherical black hole with thin accretion disk (1979)</a>.
+                        The first "image" of a black hole, plotted by hand on negative Canson paper with black India ink.  
+                    </Typography>
+                    <Typography variant="subtitle1" sx={{ mt: 2 }}>
+                        Original Image by Jean-Pierre Luminet (1979):
+                    </Typography>
+                    <img src={process.env.PUBLIC_URL + '/blackhole/luminet_bh.jpg'} alt="Original Black Hole" />  
+                    <Typography sx={{ mt: 2 }}>
+                        Below is a diagram explaining the optical distortions near a black hole.
+                        The light emitted from the upper side of the disk forms a direct or 'Primary' image and is considerably distorted
+                        so that it is completely visible. The lower side of the disk is also visible as 
+                        the 'Secondary' image caused by highly curved light rays.
+                        <br/>
+                        <br/>
+                        In Luminet's original image shown above, he decided to omit the secondary image. 
+                    </Typography>
+                    <img src={process.env.PUBLIC_URL + '/blackhole/diagram.jpg'} alt="Black Hole Diagram" />
+                    <Typography sx={{ mt: 2 }}>
+                        To further help in understanding you can highlight either the primary or secondary images.
+                        Also, you can switch between Einsteinian and Newtonian physics models to showcase the affects of gravitational lensing.  
+                    </Typography>
+                    <Typography sx={{ mt: 2 }}>
+                        With Newtonian physics selected, the image you will see will resemble planetary rings.
+                        Imagine Saturn but the planet itself is a pure black sphere.
+                    </Typography>
+
+                    <CloseButton onClick={handleClose} sx={{ mt: 2 }}>
+                        Close <Close />
+                    </CloseButton>
+
+                </ModalBox> 
+            </Modal>
             <PageContainer> 
                 <GridContainer container spacing={0}> 
                     <Grid item xs={1}>
@@ -413,6 +446,11 @@ const BlackHole = () => {
                                     </SliderDiv>
                                 </Grid>
                                 <Grid item xs={6}> 
+                                    <AboutButtonGroup id="Physics-Model" variant="contained" aria-label="Basic button group">
+                                        <Button variant="contained" key="one" onClick={() => handleOpen()}>
+                                                        About  
+                                        </Button>   
+                                    </AboutButtonGroup>
                                     <PhysicsLabel id="Physics-Model">Physics Model</PhysicsLabel>
                                     <ButtonGroup id="Physics-Model" variant="contained" aria-label="Basic button group">
                                         <Button variant="contained" key="one" onClick={() => {setShowNewtonian((show) => !show);
@@ -433,8 +471,7 @@ const BlackHole = () => {
                                                 <FormControlLabel value={HighlightState.GHOST}   control={<Radio />} label="SECONDARY" />
                                             </RadioGroup>
                                         </RadioFormControl>
-                                    }
-
+                                    } 
                                 </Grid>
                             </CheckBoxContainer>
                         </ControlPanel>
