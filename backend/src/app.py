@@ -30,6 +30,8 @@ def get_company_from_id(identifier):
         '9b0d1a2': 'Scribd', 
         '8e3fcf7': 'DataVisor',
         '61926ea': 'Replicant Inc',
+        'f788e4d': 'MineSense',
+        'b687e92': 'Grafana Labs',
         '1234567': 'Test Company',
 
     }
@@ -68,6 +70,8 @@ def get_job_title(company):
         'Scribd':'Full stack Software Engineer',
         'DataVisor':'Software Engineer',
         'Replicant Inc':'Software Engineer',
+        'MineSense':'Intermediate Software Developer',
+        'Grafana Labs':'Web Developer',
         'Test Company': 'test job',
         
     }
@@ -86,6 +90,8 @@ def get_cover_letter_file_name(company):
         'Test Company':'Aspect_Bio.pdf',
         'DataVisor':'DataVisor Cover Letter.pdf',
         'Replicant Inc':'Replicant Cover Letter.pdf',
+        'MineSense' : 'MineSense Cover Letter.pdf',
+        'Grafana Labs': 'Grafana Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
