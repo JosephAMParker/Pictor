@@ -221,8 +221,7 @@ const Destroyer = () => {
             console.log(crackImage)
         }
 
-        function checkCracks() {
-            console.log(process.env.PUBLIC_URL + '/glassWorker.js')
+        function checkCracks() { 
             const worker = new Worker(process.env.PUBLIC_URL + '/glassWorker.js', { type : 'module' } );
             const canvas = canvasRef.current
             const ctx = canvas?.getContext('2d');
