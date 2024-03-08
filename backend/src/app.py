@@ -32,6 +32,7 @@ def get_company_from_id(identifier):
         '61926ea': 'Replicant Inc',
         'f788e4d': 'MineSense',
         'b687e92': 'Grafana Labs',
+        '6280ffa': 'Voltus',
         '1234567': 'Test Company',
 
     }
@@ -72,6 +73,7 @@ def get_job_title(company):
         'Replicant Inc':'Software Engineer',
         'MineSense':'Intermediate Software Developer',
         'Grafana Labs':'Web Developer',
+        'Voltus':'Backend Software Engineer',
         'Test Company': 'test job',
         
     }
@@ -92,6 +94,7 @@ def get_cover_letter_file_name(company):
         'Replicant Inc':'Replicant Cover Letter.pdf',
         'MineSense' : 'MineSense Cover Letter.pdf',
         'Grafana Labs': 'Grafana Cover Letter.pdf',
+        'Voltus':'Voltus Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
