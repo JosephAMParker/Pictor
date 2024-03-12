@@ -31,17 +31,17 @@ const Compass = ({ direction, setDirection  }) => {
 
     const handleMouseUp = () => {
         setIsDragging(false);
-    };
-
-    const handleMouseMove = (event) => {
-        if (isDragging) {
-            const newDirection = calculateAngle(event); 
-            setDisplayDirection(newDirection);
-            setDirection(360 - newDirection)
-        }
-    };
+    }; 
 
     useEffect(() => {
+        const handleMouseMove = (event) => {
+          if (isDragging) {
+              const newDirection = calculateAngle(event); 
+              setDisplayDirection(newDirection);
+              setDirection(360 - newDirection)
+          }
+        };
+
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
 
@@ -49,7 +49,7 @@ const Compass = ({ direction, setDirection  }) => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mouseup', handleMouseUp);
         };
-    }, [isDragging]);
+    }, [setDirection, setDisplayDirection, isDragging]);
     
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 20}}>

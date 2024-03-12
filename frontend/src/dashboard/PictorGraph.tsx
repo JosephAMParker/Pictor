@@ -1,9 +1,7 @@
 import * as React from 'react';  
 import * as d3 from 'd3'; 
 import { useRef } from 'react';
-import styled from 'styled-components';
-import { wait } from '@testing-library/user-event/dist/utils';
-
+import styled from 'styled-components'; 
 
 interface GraphSVGProps {
     rotation: number; 
@@ -36,8 +34,7 @@ type PictorGraphProps = {
 export default function PictorGraph(props:PictorGraphProps){
 
     const {pathType, w, h, amp, freq, xPos, rotationAngle} = props
-    const [paddingTop, setPaddingTop] = React.useState('50%')
-    const [paddingSide, setPaddingSide] = React.useState('50%')
+ 
     const svgRef = useRef<SVGSVGElement | null>(null);   
     React.useEffect(() => {
 
@@ -65,13 +62,13 @@ export default function PictorGraph(props:PictorGraphProps){
         const lineFunction = (x:number) => h/2 ;
 
         let func = lineFunction 
-        if (pathType == 'sine'){
+        if (pathType === 'sine'){
             func = sineFunction
-        } else if (pathType == 'line'){
+        } else if (pathType === 'line'){
             func = lineFunction
-        } else if (pathType == 'circle'){
+        } else if (pathType === 'circle'){
             func = circleFunction
-        } else if (pathType == 'curve'){
+        } else if (pathType === 'curve'){
             func = curveFunction
         }  
 
@@ -120,8 +117,7 @@ export default function PictorGraph(props:PictorGraphProps){
             .attr("x2", w)
             .attr("y2", h/2);
             
-
-            const bbox = svgRef.current.getBBox();  
+ 
             const viewBoxValue = `${0} ${0} ${w} ${h}`; 
             svg.attr('viewBox', viewBoxValue);
             svg.attr('preserveAspectRatio', "xMidYMid meet")

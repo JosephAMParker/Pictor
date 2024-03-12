@@ -6,8 +6,8 @@ import { Box, Button, Container, CssBaseline, Grid, List, ListItem, TextField, T
 import { Link } from 'react-router-dom'; 
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import PDFRenderer from '../util/PDFRenderer'; 
-import Animate from '../animate/Animate'; 
+import PDFRenderer from '../util/PDFRenderer';  
+import Croids from '../animate/Croids';
 
 let theme = createTheme({
   palette: {
@@ -329,7 +329,7 @@ const Home = (props: HomeProps) => {
       if(!urlPattern.test(event.target.value)){
         throw new SyntaxError(event.target.value + ' 2is not a valid URL.', {"cause": "bad url"})
       }
-      const url = new URL(event.target.value)
+      new URL(event.target.value)
       setUrlWarning('')
     } catch(error) {
       if (error instanceof TypeError || error instanceof SyntaxError || error instanceof RangeError) {
@@ -528,7 +528,7 @@ const Home = (props: HomeProps) => {
         <Button onClick={() => handleScrollToPDF()}>Scroll Up</Button>
       </PDFButtons> 
 
-      <Animate />           
+      <Croids />           
        
     </ThemeProvider>
   );

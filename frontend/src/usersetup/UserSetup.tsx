@@ -1,5 +1,5 @@
 import * as React from 'react'; 
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { apiUrl } from '../Constants'; 
 
@@ -11,8 +11,7 @@ declare global {
 }
 
 const UserSetup: React.FC = () => {
-    const navigate = useNavigate(); 
-    const location = useLocation() 
+    const navigate = useNavigate();  
 
     React.useEffect(() => {
         const setupUser = async () => {
@@ -22,7 +21,7 @@ const UserSetup: React.FC = () => {
                 const user_id = urlSearchParams.get('u');
 
                 // Check if user_type already exists in local storage
-                const existingUserType = localStorage.getItem('user_type') && localStorage.getItem('user_type') !== 'UnknownUser';
+                // const existingUserType = localStorage.getItem('user_type') && localStorage.getItem('user_type') !== 'UnknownUser';
 
                 if (user_id) {  
 

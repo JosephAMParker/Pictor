@@ -215,6 +215,24 @@ class Boid {
         this.wingPhase += 0.01 * elapsedTime
         this.wingPhase %= (Math.PI * 2)
     } 
+
+    limitVy(): void {
+
+        const maxVerticalRatio = 0.6;
+        // Calculate the squared magnitude of the velocity vector (squared sum of squares)
+        const magnitude = Math.sqrt(this.vx ** 2 + this.vy ** 2 + this.vz ** 2);
+
+        // Check if the squared vertical velocity (vy) exceeds the squared magnitude multiplied by the threshold 
+        if (Math.abs(this.vy) > magnitude * maxVerticalRatio) {
+            // Adjust vy to ensure it doesn't exceed the threshold
+            if(this.vy > 0){
+                this.vy = magnitude * maxVerticalRatio
+            } else {
+                this.vy = -magnitude * maxVerticalRatio
+            }
+        }
+    }
+
   }
 
 class FollowPoint {
@@ -320,6 +338,7 @@ const Animate = () => {
             //draw wings
             const wing = [9,9]
             const bodyWidth = 1
+
             // draw right wing   
             ctx.setTransform(new DOMMatrix()
                 .translateSelf(boid.x + boid.size/2, boid.y + boid.size/2) 
@@ -363,7 +382,7 @@ const Animate = () => {
             ctx.lineTo(-6, -2);
             ctx.lineTo(-19, 0); //tail
             ctx.closePath();
-            ctx.fill();  
+            ctx.fill();   
             
             ctx.restore();
         }
@@ -414,6 +433,8 @@ const Animate = () => {
                     boid.calcYAcc();
                     boid.calcWingPhase(elapsedTime);
                     drawBoid(ctx, boid);
+
+                    boid.limitVy()
                 }
                 
             

@@ -10,7 +10,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import ViewArrayIcon from '@mui/icons-material/ViewArray';
 import { ExpandLess, ExpandMore, StarBorder, Star, BlurLinear} from '@mui/icons-material';
-import { Collapse, Divider, ListItem, Slider, Typography } from '@mui/material';
+import { Collapse, Divider, ListItem, Slider } from '@mui/material';
 import SortIcon from '@mui/icons-material/Sort';
 import UTurnRightIcon from '@mui/icons-material/UTurnRight';
 import LooksIcon from '@mui/icons-material/Looks';
@@ -53,7 +53,7 @@ type DashboardListProps = {
 
 export default function DashboardList(props:DashboardListProps){ 
  
-    const { imageWidth, disableSort, pathFreq, setShowGraph, showGraph, setPathFreq, pathX, setPathX, pathAmp, setPathAmp, pathType, setPathType, intervalType, setIntervalType, useStar, setUseStar, showThresh, setShowThresh, blend, setBlend, inFilter, setInFilter, penSize, setPenSize, drawMode, setDrawMode, useMask, setUseMask, handleUploadImage, handlePixelSort, handleClearCanvas } = props;
+    const { imageWidth, disableSort, pathFreq, setShowGraph, showGraph, setPathFreq, pathX, setPathX, pathAmp, setPathAmp, pathType, setPathType, intervalType, setIntervalType, useStar, setUseStar, showThresh, setShowThresh, blend, setBlend, inFilter, setInFilter, penSize, setPenSize, drawMode, setDrawMode, useMask, setUseMask, handlePixelSort, handleClearCanvas } = props;
 
     const [openStar, setOpenStar] = React.useState(false)
     const [openMask, setOpenMask] = React.useState(false) 
@@ -242,10 +242,10 @@ export default function DashboardList(props:DashboardListProps){
 
             <ListItemButton onClick={() => {setOpenPathType(!openPathType)}}>
                 <ListItemIcon> 
-                    {pathType == 'line' && <ArrowRightAltIcon />}
-                    {pathType == 'curve' && <UTurnRightIcon/>}
-                    {pathType == 'circle' && <LooksIcon/>}
-                    {pathType == 'sine' && <AirlineStopsIcon />} 
+                    {pathType === 'line' && <ArrowRightAltIcon />}
+                    {pathType === 'curve' && <UTurnRightIcon/>}
+                    {pathType === 'circle' && <LooksIcon/>}
+                    {pathType === 'sine' && <AirlineStopsIcon />} 
                 </ListItemIcon>
                 <ListItemText 
                 sx={{textTransform: 'capitalize'}}

@@ -123,7 +123,7 @@ const Destroyer = () => {
         setImageList((prevImageList) => 
             prevImageList.filter((imageData) => imageData.key !== keyToRemove)
         );
-    }, [imageList, setImageList]); 
+    }, [setImageList]); 
 
     const clearChunks = React.useCallback(() => { 
         setImageList([])

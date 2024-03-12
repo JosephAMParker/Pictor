@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useRef, useEffect, useLayoutEffect } from 'react';
 
 const DrawingApp = (props) => {
-    const { useStar, useMask, setStarPoint, penSize, drawMode, initialized, setInitialized, height, width, forwardedRef, hidden, originalImage, inFilter }  = props
+    const { useStar, useMask, setStarPoint, penSize, drawMode, initialized, setInitialized, height, width, forwardedRef, originalImage, inFilter }  = props
     const imageDataRef = useRef(null);
     const outFilterRef = useRef(null);
     const inFilterRef = useRef(null); 
@@ -132,8 +132,7 @@ const DrawingApp = (props) => {
         const outCanvas = outFilterRef.current;
         const outContext = outCanvas.getContext('2d');
         
-        const orgCanvas = originalRef.current;
-        const origContext = orgCanvas.getContext('2d');
+        const orgCanvas = originalRef.current; 
         
         const rect = canvas.getBoundingClientRect();
       
@@ -246,8 +245,7 @@ const DrawingApp = (props) => {
             const inCanvas = inFilterRef.current;
             const inctx = inCanvas.getContext('2d');   
             const origCanvas = originalRef.current;
-            inctx.drawImage(origCanvas, 0, 0);
-            const blobUrl = originalImage;  
+            inctx.drawImage(origCanvas, 0, 0); 
             
             // set out canvas
             const outCanvas = outFilterRef.current; 
