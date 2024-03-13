@@ -22,7 +22,7 @@ def get_company_from_id(identifier):
     user_mapping = { 
         'a864b84': 'Coalition',
         '1918ebf': 'Pacific Salmon Foundation',
-        '844c86a': 'Stripe',
+        '844c86a': 'Overflow',
         '1e84da4': 'Khan Academy',
         'fb718d5': 'Aspect Biosystems',
         'e8ee4fa': 'Tucows',
@@ -34,6 +34,7 @@ def get_company_from_id(identifier):
         'b687e92': 'Grafana Labs',
         '6280ffa': 'Voltus',
         '14c4c1a': 'Ecobee',
+        'fd359f0': 'Gladiate Law',
         '1234567': 'Test Company',
 
     }
@@ -64,7 +65,7 @@ def get_job_title(company):
     user_site_mapping = { 
         'D-Wave': 'feefef/',
         'Pacific Salmon Foundation': 'efefef',
-        'Stripe':'efefef',
+        'Overflow':'Full Stack Engineer',
         'Khan Academy':'Fullstack Engineer II',
         'Aspect Biosystems':'Fullstack Software Engineer',
         'Tucows':'Full Stack Engineer',
@@ -77,6 +78,7 @@ def get_job_title(company):
         'Voltus':'Backend Software Engineer',
         'Ecobee':'Software Engineer',
         'Coalition':'Software Engineer',
+        'Gladiate Law': 'Back-End Engineer',
         'Test Company': 'test job',
         
     }
@@ -99,7 +101,9 @@ def get_cover_letter_file_name(company):
         'Grafana Labs': 'Grafana Cover Letter.pdf',
         'Ecobee':'Ecobee Cover Letter.pdf', 
         'Voltus':'Voltus Cover Letter.pdf',
-        'Coalition':'Coalition Cover Letter.pdf'
+        'Coalition':'Coalition Cover Letter.pdf',
+        'Overflow':'Overflow Cover Letter.pdf',
+        'Gladiate Law': 'Gladiate Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
