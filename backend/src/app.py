@@ -20,7 +20,7 @@ cors = CORS(app)
 
 def get_company_from_id(identifier):
     user_mapping = { 
-        'a864b84': 'D-Wave',
+        'a864b84': 'Coalition Inc',
         '1918ebf': 'Pacific Salmon Foundation',
         '844c86a': 'Stripe',
         '1e84da4': 'Khan Academy',
@@ -76,6 +76,7 @@ def get_job_title(company):
         'Grafana Labs':'Web Developer',
         'Voltus':'Backend Software Engineer',
         'Ecobee':'Software Engineer',
+        'Coalition':'Software Engineer',
         'Test Company': 'test job',
         
     }
@@ -98,6 +99,7 @@ def get_cover_letter_file_name(company):
         'Grafana Labs': 'Grafana Cover Letter.pdf',
         'Ecobee':'Ecobee Cover Letter.pdf', 
         'Voltus':'Voltus Cover Letter.pdf',
+        'Coalition':'Coalition Cover Letter.pdf'
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
