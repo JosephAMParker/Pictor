@@ -20,7 +20,7 @@ cors = CORS(app)
 
 def get_company_from_id(identifier):
     user_mapping = { 
-        'a864b84': 'Coalition Inc',
+        'a864b84': 'Coalition',
         '1918ebf': 'Pacific Salmon Foundation',
         '844c86a': 'Stripe',
         '1e84da4': 'Khan Academy',
