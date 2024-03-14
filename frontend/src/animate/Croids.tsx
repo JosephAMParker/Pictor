@@ -314,8 +314,7 @@ const Croids = () => {
     const [followMode, setFollowMode] = React.useState<FollowMode>(FollowMode.NONE);
     const [negate, setNegate] = React.useState(1);
     const [avoidPoint, setAvoidPoint] = React.useState<number[]>([]);
-    const pixiContainerRef = React.useRef<HTMLDivElement>(null);
-    const pixiCanvasRef = React.useRef<HTMLCanvasElement>(null);
+    const pixiContainerRef = React.useRef<HTMLDivElement>(null); 
     const app = React.useRef<Application>(new Application()); 
 
     React.useEffect(() => {
@@ -343,8 +342,11 @@ const Croids = () => {
         }
         const handleMouseDown = (event: MouseEvent) => {
             if (!(event.buttons === 1)) return;
-            setAvoidPoint([event.x, event.y]) 
-        }
+            const scrollX = document.documentElement.scrollLeft;
+            const scrollY = document.documentElement.scrollTop;
+            setAvoidPoint([event.clientX + scrollX, event.clientY + scrollY]); 
+        } 
+
         const handleMouseUp = () => {
             setAvoidPoint([]) 
         }    
