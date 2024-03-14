@@ -36,6 +36,7 @@ def get_company_from_id(identifier):
         '14c4c1a': 'Ecobee',
         'fd359f0': 'Gladiate Law', 
         'dbcd85a': 'Run As You Are',
+        'f41fe5b': 'Rally',
         '1234567': 'Test Company',
 
     }
@@ -81,6 +82,7 @@ def get_job_title(company):
         'Coalition':'Software Engineer',
         'Gladiate Law': 'Back-End Engineer',
         'Run As You Are': 'Full Stack Developer',
+        'Rally':'Intermediate Full-Stack Engineer',
         'Test Company': 'test job',
         
     }
@@ -106,7 +108,8 @@ def get_cover_letter_file_name(company):
         'Coalition':'Coalition Cover Letter.pdf',
         'Overflow':'Overflow Cover Letter.pdf',
         'Gladiate Law': 'Gladiate Cover Letter.pdf',
-        'Run As You Are':'Run Cover Letter.pdf'
+        'Run As You Are':'Run Cover Letter.pdf',
+        'Rally':'Rally Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
