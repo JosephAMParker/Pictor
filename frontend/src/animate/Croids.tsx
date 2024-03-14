@@ -5,17 +5,12 @@ import { Application, Assets, Sprite, Texture, Ticker } from 'pixi.js';
 const ContainerDiv = styled('div')({
     pointerEvents: 'none', 
     position: 'absolute',
-    width: window.innerWidth - 40,
-    height: window.innerHeight - 40,
+    width: 'calc(100% - 40px)',  
+    height: 'calc(100% - 40px)',
     top:20,
     left:20,
     zIndex:2
-}) 
-
-const CanvasDiv = styled('div')({ 
-    height: '100%',
-    width: '100%'
-}) 
+})  
 
 const AVOID_POINT_DIST = 9000;
 const AVOID_POINT_FACTOR = 0.2;
@@ -302,25 +297,7 @@ const calculateRotation = (vx: number, vy: number, vz: number) => {
     const pitch = Math.atan2(Math.sqrt(vx**2 + vy**2), vz);
 
     return { x: pitch, y: yaw, z: roll };
-};
-
-const mapPhaseValue = (value: number): number => {
-
-    const inMin = 0
-    const inMax = 2 * Math.PI
-
-    const outMin = -15
-    const outMax = 150 
-    
-    // Perform linear mapping
-    const mappedValue = ((value - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
-
-    // Reverse mapping if the value is in the second half of the output range
-    if (mappedValue > (outMin + outMax) / 2) {
-        return outMax - (mappedValue - outMin);
-    }
-    return mappedValue;
-};
+}; 
 
 const NUMBER_OF_BOIDS = Math.min(Math.floor(window.innerWidth / 10), 200)
 
@@ -338,6 +315,7 @@ const Croids = () => {
     const [negate, setNegate] = React.useState(1);
     const [avoidPoint, setAvoidPoint] = React.useState<number[]>([]);
     const pixiContainerRef = React.useRef<HTMLDivElement>(null);
+    const pixiCanvasRef = React.useRef<HTMLCanvasElement>(null);
     const app = React.useRef<Application>(new Application()); 
 
     React.useEffect(() => {
@@ -345,10 +323,11 @@ const Croids = () => {
         const appNow = app.current
         const initPixi = async () => { 
 
-            // init PixiJS put to container and load assets
-            if (pixiContainerRef.current){
-                await app.current.init({ antialias: true, resizeTo: pixiContainerRef.current, backgroundAlpha: 0}); 
-            }
+            // init PixiJS put to container and load assets 
+            const croidsCanvas = document.getElementById('croids-canvas')
+            if(croidsCanvas)
+                await app.current.init({ antialias: true, resizeTo: croidsCanvas, backgroundAlpha: 0, autoDensity:true}); 
+                
             pixiContainerRef.current?.appendChild(app.current.canvas);   
             await Assets.load(process.env.PUBLIC_URL + '/croids/croids.json');  
 
@@ -368,11 +347,8 @@ const Croids = () => {
         }
         const handleMouseUp = () => {
             setAvoidPoint([]) 
-        }  
-        const handleResize = () => {
-            app.current.renderer.resize(window.innerWidth - 40, window.innerHeight - 40);
-        };  
-        window.addEventListener('resize', handleResize);
+        }    
+
         document.addEventListener('mousedown', handleMouseDown); 
         document.addEventListener('mouseleave', handleMouseUp);
         document.addEventListener('mouseup', handleMouseUp);
@@ -380,8 +356,7 @@ const Croids = () => {
         initPixi()
 
         // Clean up function 
-        return () => {
-            window.removeEventListener('resize', handleResize);
+        return () => { 
             document.removeEventListener('mousedown', handleMouseDown); 
             document.removeEventListener('mouseleave', handleMouseUp);
             document.removeEventListener('mouseup', handleMouseUp);
@@ -457,12 +432,10 @@ const Croids = () => {
             }
         };
 
-    },[boids, avoidPoint, attractPoints, followMode, negate]) 
+    },[boids, avoidPoint, attractPoints, followMode, negate])  
 
-    return (   
-        <ContainerDiv id="animate-div">
-            <CanvasDiv ref={pixiContainerRef}></CanvasDiv>;
-        </ContainerDiv> 
+    return (    
+        <ContainerDiv id="croids-canvas" ref={pixiContainerRef}></ContainerDiv> 
     );
 };
 
