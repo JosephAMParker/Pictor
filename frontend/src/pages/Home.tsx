@@ -64,6 +64,17 @@ const ContentList = styled(List)`
   && {
     margin-top: 0px;
     padding-top: 0px;
+
+    background-color: #fffefc;
+    z-index: 900;
+    opacity: 0.8;
+    border-radius: 50px;   
+  
+    &&::before { 
+      z-index: -1;
+      background: inherit;
+      filter: blur(30px); /* Apply blur effect to the pseudo-element */
+    } 
   }
 `;
 
@@ -84,6 +95,21 @@ const ContentButton = styled(Button)`
     }
   }
 `;
+
+const TitleGrid = styled(Grid)`
+&& {   
+  background-color: #fffefc;
+  z-index: 900;
+  opacity: 0.8;
+  border-radius: 50px;   
+
+  &&::before { 
+    z-index: -1;
+    background: inherit;
+    filter: blur(10px); /* Apply blur effect to the pseudo-element */
+  } 
+}
+`; 
 
 const ContentDiv = styled('div')`
   && {  

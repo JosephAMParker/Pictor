@@ -37,6 +37,7 @@ def get_company_from_id(identifier):
         'fd359f0': 'Gladiate Law', 
         'dbcd85a': 'Run As You Are',
         'f41fe5b': 'Rally',
+        '4157060': 'Mechanical Orchard',
         '1234567': 'Test Company',
 
     }
@@ -83,6 +84,7 @@ def get_job_title(company):
         'Gladiate Law': 'Back-End Engineer',
         'Run As You Are': 'Full Stack Developer',
         'Rally':'Intermediate Full-Stack Engineer',
+        'Mechanical Orchard': 'Software Engineer',
         'Test Company': 'test job',
         
     }
@@ -110,6 +112,7 @@ def get_cover_letter_file_name(company):
         'Gladiate Law': 'Gladiate Cover Letter.pdf',
         'Run As You Are':'Run Cover Letter.pdf',
         'Rally':'Rally Cover Letter.pdf',
+        'Mechanical Orchard': 'Mechanical Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
