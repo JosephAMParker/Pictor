@@ -330,7 +330,7 @@ const Home = (props: HomeProps) => {
           <>
             <p>Hello Hiring team for {company}! <br /> 
                Welcome to my site. You can find some of my projects from the menu on the left in the 'Projects' tab, <br/>
-               And in 'Info' you will find my Resume and my Cover Letter for my application to the {jobTitle} position.
+               And in 'Info' you will find my Resume {coverLetter && 'and my Cover Letter'} for my application to the {jobTitle} position.
             </p>  
             <p>Enjoy your stay and I hope I will be hearing from you soon!</p>
           </>

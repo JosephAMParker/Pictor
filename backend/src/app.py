@@ -38,7 +38,8 @@ def get_company_from_id(identifier):
         'dbcd85a': 'Run As You Are',
         'f41fe5b': 'Rally',
         '4157060': 'Mechanical Orchard',
-        '1234567': 'Test Company',
+        '5d689cc': 'BC Public Service',
+        '1234567': 'Test Company', 
 
     }
     return user_mapping.get(identifier, 'UnknownUser')
@@ -85,6 +86,7 @@ def get_job_title(company):
         'Run As You Are': 'Full Stack Developer',
         'Rally':'Intermediate Full-Stack Engineer',
         'Mechanical Orchard': 'Software Engineer',
+        'BC Public Service':'ISL 24R - Full Stack Developer',
         'Test Company': 'test job',
         
     }

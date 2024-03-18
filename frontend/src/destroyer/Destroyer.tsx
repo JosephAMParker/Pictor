@@ -215,10 +215,13 @@ const Destroyer = () => {
                 context.strokeStyle = '#FFF';  
                 context.lineWidth = 2; 
                 context.strokeRect(0, 0, canvas.width, canvas.height);
+
+                checkCracks();
             }; 
 
             crackImage.src = process.env.PUBLIC_URL + '/glass/crack1.png'
-            console.log(crackImage)
+            // console.log(crackImage)
+            
         }
 
         function checkCracks() { 
@@ -271,7 +274,7 @@ const Destroyer = () => {
                 }; 
 
                 const handleMouseUp = () => {
-                    checkCracks(); 
+                    // checkCracks(); 
                 };
                 
                 canvas.addEventListener('mousedown', handleMouseDown);
