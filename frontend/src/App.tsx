@@ -11,7 +11,7 @@ import Luminet from './pages/Luminet';
 
 export default function App() {
 
-  const [homeContent, setHomeContent] = React.useState<ContentPage>(ContentPage.NULL);
+  const [homeContent, setHomeContent] = React.useState<ContentPage>(ContentPage.PROJECTS);
   const [message, setMessage] = React.useState('')
   const [company, setCompany] = React.useState('')
   const [urlParameter, setUrlParameter] = React.useState('https://example.com/');

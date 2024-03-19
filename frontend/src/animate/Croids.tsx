@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { styled } from '@mui/material';    
 import { Application, Assets, Sprite, Texture, Ticker } from 'pixi.js';
+import { START_NUMBER_OF_BOIDS } from '../Constants';
 
 const ContainerDiv = styled('div')({
     pointerEvents: 'none', 
@@ -17,13 +18,15 @@ const AVOID_POINT_FACTOR = 0.2;
 const ATTRACT_POINT_DIST = 30000;
 const ATTRACT_POINT_FACTOR = 0.00005;
 const AVOID_RANGE = 4000;
-const AVOID_FACTOR = 0.001; 
+const AVOID_FACTOR = 0.002; 
 const ALIGNMENT_RANGE = 16000;
 const ALIGNMENT_FACTOR = 0.05; 
 const COHESION_RANGE = 24000;
 const COHESION_FACTOR = 0.0005; 
 const EDGE_FACTOR = 0.05;
 const MARGIN_EDGE = 200;
+
+const GRID_OUTSIDE = 'outside';
 
 class Boid { 
 
@@ -40,6 +43,7 @@ class Boid {
     size: number;
     maxSpeed: number;
     wingPhase:number;  
+    gridKey:string;
 
     ySine: number;
     xSine: number;
@@ -66,6 +70,8 @@ class Boid {
         this.ySine = 0;
         this.xSine = 0;
         this.zSine = 0;
+
+        this.gridKey = GRID_OUTSIDE
     }
 
     move(elapsedTime:number) {
@@ -168,7 +174,7 @@ class Boid {
     }
 
     checkEdges() { 
-        if (this.y > window.innerHeight - MARGIN_EDGE * 3){
+        if (this.y > window.innerHeight - MARGIN_EDGE * 2){
             this.vy -= EDGE_FACTOR
         }
         if (this.y < MARGIN_EDGE){
@@ -286,6 +292,104 @@ class FollowPoint {
     }
 }
 
+class BoidGrid {
+
+    squares: { [key: string]: Set<Boid> } = {};
+    gridSize: number
+    xSize: number
+    ySize: number 
+    width: number
+    height: number
+
+    // Initialize grid with appropriate dimensions
+    constructor() {
+        this.width = window.innerWidth;
+        this.height = window.innerHeight;
+        this.gridSize = 3
+        this.xSize = this.width  / this.gridSize
+        this.ySize = this.height / this.gridSize
+        this.reset()
+    }
+
+    reset() {
+        this.width = window.innerWidth;
+        this.height = window.innerHeight; 
+        this.xSize = this.width  / this.gridSize
+        this.ySize = this.height / this.gridSize
+        for (let x = 0; x < this.width; x += this.xSize) {
+            for (let y = 0; y < this.height; y += this.ySize) {
+                const key = this.gridKey(x,y)
+                this.squares[key] = new Set();
+            }
+        }
+
+        this.squares[GRID_OUTSIDE] = new Set();
+    }
+
+    gridKey(x: number, y: number){
+        if (x < 0 || x > this.width)
+            return GRID_OUTSIDE
+        if (y < 0 || y > this.height)
+            return GRID_OUTSIDE
+        return `${Math.floor(x / this.xSize)}-${Math.floor(y / this.ySize)}`;
+    }
+
+    // Assign boid to grid square
+    assignBoid(boid: Boid) {
+        const x = boid.x
+        const y = boid.y;
+        const key = this.gridKey(x,y)
+        this.squares[key].add(boid);
+    }
+
+    // Update boid position and grid assignment
+    updateBoid(boid: Boid) {
+        const x = boid.x
+        const y = boid.y;
+        const currentKey = this.gridKey(x,y)
+
+        // Check if the boid has moved to a new grid square
+        if (boid.gridKey !== currentKey) {
+            // Remove the boid from its previous grid square
+            const previousKey = boid.gridKey;
+            this.squares[previousKey].delete(boid);
+
+            // Update the boid's grid assignment
+            boid.gridKey = currentKey;
+
+            // Assign the boid to the new grid square
+            this.squares[currentKey].add(boid);
+        }
+    }
+
+    // Get neighboring boids for a given boid
+    getNeighborBoids(boid: Boid): Boid[] {
+        const x = boid.x
+        const y = boid.y;
+
+        // const neighboringCoordinates = [
+        //                         { dx: 0, dy: -this.ySize },  
+        //     { dx: -this.xSize, dy: 0 },                     { dx: this.xSize, dy: 0 },
+        //                         { dx: 0, dy: this.ySize },  
+        // ];
+
+        const neighboringCoordinates = [
+            { dx: -this.xSize, dy: -this.ySize }, { dx: 0, dy: -this.ySize }, { dx: -this.xSize, dy: -this.ySize },
+            { dx: -this.xSize, dy: 0 },                                       { dx: this.xSize, dy: 0 },
+            { dx: -this.xSize, dy: this.ySize },  { dx: 0, dy: this.ySize },  { dx: this.xSize, dy: this.ySize } 
+        ];
+        const neighboringBoids = boid.gridKey !== GRID_OUTSIDE ? Array.from(this.squares[boid.gridKey]) : []
+        for (const { dx, dy } of neighboringCoordinates) {
+            const key = this.gridKey(x+dx,y+dy)
+            if (key !== GRID_OUTSIDE){  
+                neighboringBoids.concat(Array.from(this.squares[key]))
+            }
+        } 
+        return neighboringBoids;
+    }
+
+}
+
 const calculateRotation = (vx: number, vy: number, vz: number) => {
     
     const v = Math.sqrt(vx**2 + vy**2 + vz**2)
@@ -297,9 +401,7 @@ const calculateRotation = (vx: number, vy: number, vz: number) => {
     const pitch = Math.atan2(Math.sqrt(vx**2 + vy**2), vz);
 
     return { x: pitch, y: yaw, z: roll };
-}; 
-
-const NUMBER_OF_BOIDS = Math.min(Math.floor(window.innerWidth / 10), 200)
+};  
 
 enum FollowMode {
     ONE_GROUP = "ONE_GROUP",
@@ -307,15 +409,48 @@ enum FollowMode {
     NONE = "NONE"
 }
 
-const Croids = () => {    
+type CroidsProps = {
+    numberOfBoids: number
+}
+
+const Croids = (props:CroidsProps) => {    
     
     const [boids, setBoids] = React.useState<Boid[]>([]);
     const attractPoints = React.useRef([new FollowPoint(), new FollowPoint()])
     const [followMode, setFollowMode] = React.useState<FollowMode>(FollowMode.NONE);
     const [negate, setNegate] = React.useState(1);
-    const [avoidPoint, setAvoidPoint] = React.useState<number[]>([]);
+    const [avoidPoint, setAvoidPoint] = React.useState<number[]>([]); 
+    const { numberOfBoids } = props;
     const pixiContainerRef = React.useRef<HTMLDivElement>(null); 
     const app = React.useRef<Application>(new Application()); 
+    const grid = React.useRef<BoidGrid>(new BoidGrid());
+
+    React.useEffect(() => {
+        if (numberOfBoids < boids.length){
+            setBoids(boi => boi.slice(0, numberOfBoids))
+            return
+        }
+        if (numberOfBoids > boids.length){
+            const diff = numberOfBoids - boids.length
+            const newBoids: Boid[] = []
+            
+            for(let i = 0;i<diff;i++){  
+                const boid = new Boid(window.innerWidth * Math.random(), window.innerHeight + Math.random() * window.innerHeight, Texture.from("croid_x30_z80.png0007.png"))
+                newBoids.push(boid) 
+            }
+            setBoids(boi => [...boi, ...newBoids]);
+        }
+    }, [numberOfBoids, boids.length])
+
+    React.useEffect(() => {
+        app.current.stage.removeChildren()
+        grid.current.reset()
+        for (const b in boids){
+            const boid = boids[b] 
+            app.current.stage.addChild(boid.body); 
+            grid.current.assignBoid(boid)
+        }
+    }, [boids])
 
     React.useEffect(() => {
 
@@ -332,9 +467,9 @@ const Croids = () => {
 
             // init boids
             const newBoids: Boid[] = []
-            for(let i = 0;i<NUMBER_OF_BOIDS;i++){  
+            for(let i = 0;i<START_NUMBER_OF_BOIDS;i++){  
                 const boid = new Boid(window.innerWidth * Math.random(), window.innerHeight + Math.random() * window.innerHeight, Texture.from("croid_x30_z80.png0007.png"))
-                app.current.stage.addChild(boid.body); 
+                // app.current.stage.addChild(boid.body); 
                 newBoids.push(boid)
             }   
 
@@ -373,16 +508,20 @@ const Croids = () => {
 
         const tickFn = (tick:Ticker) => {
 
+            if (tick.FPS < 45)
+                console.log(tick.FPS)
+
             for (const p in attractPoints.current){
                 const point = attractPoints.current[p]
                 point.move(); 
             }
 
             for (const b in boids){ 
-                const boid = boids[b] 
-                boid.separate(boids); 
-                boid.alignment(boids); 
-                boid.cohesion(boids, negate);
+                const boid = boids[b]  
+                const nearBoids = grid.current.getNeighborBoids(boid);
+                boid.separate(nearBoids); 
+                boid.alignment(nearBoids); 
+                boid.cohesion(nearBoids, negate);
                 boid.clampSpeed();
                 boid.checkEdges();
                 boid.avoidPoint(avoidPoint);
@@ -396,7 +535,9 @@ const Croids = () => {
                 boid.calcYAcc();
                 boid.calcWingPhase(tick.deltaTime);
 
-                boid.limitVy();    
+                boid.limitVy();   
+                
+                grid.current.updateBoid(boid)
 
                 boid.body.x = boid.x
                 boid.body.y = boid.y  

@@ -1,8 +1,8 @@
 // Home.tsx
 import * as React from 'react';
 import axios from 'axios'; 
-import { apiUrl } from '../Constants';
-import { Box, Button, Container, CssBaseline, Grid, List, ListItem, TextField, ThemeProvider, Typography, createTheme, responsiveFontSizes, styled } from '@mui/material'; 
+import { START_NUMBER_OF_BOIDS, apiUrl } from '../Constants';
+import { Box, Button, Container, CssBaseline, Grid, List, ListItem, Slider, TextField, ThemeProvider, Typography, createTheme, responsiveFontSizes, styled } from '@mui/material'; 
 import { Link } from 'react-router-dom'; 
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -94,21 +94,6 @@ const ContentButton = styled(Button)`
       padding-right: 5px;
     }
   }
-`;
-
-const TitleGrid = styled(Grid)`
-&& {   
-  background-color: #fffefc;
-  z-index: 900;
-  opacity: 0.8;
-  border-radius: 50px;   
-
-  &&::before { 
-    z-index: -1;
-    background: inherit;
-    filter: blur(10px); /* Apply blur effect to the pseudo-element */
-  } 
-}
 `; 
 
 const ContentDiv = styled('div')`
@@ -258,6 +243,9 @@ const Home = (props: HomeProps) => {
   const [pdf, setPDF] = React.useState(resume_pdf)
   const [urlInput, setUrlInput] = React.useState('');
   const [urlWarning, setUrlWarning] = React.useState('');
+
+  const [numberOfBoids, setNumberOfBoids] = React.useState<number>(START_NUMBER_OF_BOIDS) 
+  const [numberOfBoidsSlider, setNumberOfBoidsSlider] = React.useState<number>(numberOfBoids) 
   
   const [coverLetterLoading, setCoverLetterLoading] = React.useState(false)
   const pdfRef = React.useRef<HTMLDivElement | null>(null);
@@ -405,7 +393,7 @@ const Home = (props: HomeProps) => {
        </ProjectLinkDiv>
       </ProjectDiv>
     )
-  }
+  } 
 
   const croidsProject = () => {
     return (
@@ -414,7 +402,21 @@ const Home = (props: HomeProps) => {
         <p>My take on the classic artificial life simulation, <a target="_blank" rel="noreferrer" href='http://www.red3d.com/cwr/boids/'>Boids</a>, developed by Craig Reynolds.</p>
         <p>But, since I live in Vancouver and have always loved our <a target="_blank" rel="noreferrer" href='https://www.thenatureofcities.com/2019/04/26/crows-vancouver-middle-way-biophobia-biophilia/'>giant crow population</a>, I decided to make them crows instead.</p>
         <p>Crows, Boids ... Croids</p>
-      </ProjectDiv>
+      
+        
+        <Typography id="input-slider" gutterBottom>
+          # of croids: {numberOfBoids}
+        </Typography>
+        <Slider 
+          min={0}
+          max={600}
+          value={numberOfBoidsSlider}
+          valueLabelDisplay="auto"
+          onChange={(_, value) => setNumberOfBoidsSlider(value as number)}
+          onChangeCommitted={() => setNumberOfBoids(numberOfBoidsSlider)}
+          aria-label="Boid # Slider" 
+        />
+        </ProjectDiv>
     )
   }
 
@@ -554,7 +556,7 @@ const Home = (props: HomeProps) => {
         <Button onClick={() => handleScrollToPDF()}>Scroll Up</Button>
       </PDFButtons> 
 
-      <Croids />           
+      <Croids numberOfBoids={numberOfBoids}/>           
        
     </ThemeProvider>
   );
