@@ -506,10 +506,7 @@ const Croids = (props:CroidsProps) => {
 
         const appNow = app.current
 
-        const tickFn = (tick:Ticker) => {
-
-            if (tick.FPS < 45)
-                console.log(tick.FPS)
+        const tickFn = (tick:Ticker) => { 
 
             for (const p in attractPoints.current){
                 const point = attractPoints.current[p]

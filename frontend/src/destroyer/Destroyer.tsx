@@ -383,7 +383,7 @@ const Destroyer = () => {
     } 
 
     return (
-        location.pathname.startsWith('/neowise') ? <></> :
+        location.pathname.startsWith('/neowise') || location.pathname.startsWith('/scavenge')? <></> :
         <> 
             {loading && <LoadingOverlay><CircularProgress /></LoadingOverlay>}
 

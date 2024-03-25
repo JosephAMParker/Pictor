@@ -7,7 +7,8 @@ import Destroyer from './destroyer/Destroyer';
 import UserSetup from './usersetup/UserSetup'; 
 import Neowise from './pages/NeoWise';
 import SiteSmash from './pages/SiteSmash';
-import Luminet from './pages/Luminet';
+import Luminet from './pages/Luminet'; 
+import ScavengePage from './pages/SavengePage';
 
 export default function App() {
 
@@ -47,6 +48,7 @@ export default function App() {
           <Route path="neowise" element={<Neowise />} />
           <Route path="screen" element={<SiteSmash />} /> 
           <Route path="luminet" element={<Luminet />} />
+          <Route path="scavenge" element={<ScavengePage/>} />
         </Routes>
       </BrowserRouter>
     </>

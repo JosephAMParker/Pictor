@@ -13,6 +13,8 @@ from urllib.parse import urlparse
 from pimage import PImage
 from pvideo import PVideo
 
+from scavenge.process import predict_class
+
 # from memory_profiler import profile
 
 app = Flask(__name__)
@@ -39,6 +41,8 @@ def get_company_from_id(identifier):
         'f41fe5b': 'Rally',
         '4157060': 'Mechanical Orchard',
         '5d689cc': 'BC Public Service',
+        'a2ebe4d': 'Imperva',
+        'a3b8219': 'Grammarly',
         '1234567': 'Test Company', 
 
     }
@@ -87,6 +91,8 @@ def get_job_title(company):
         'Rally':'Intermediate Full-Stack Engineer',
         'Mechanical Orchard': 'Software Engineer',
         'BC Public Service':'ISL 24R - Full Stack Developer',
+        'Imperva':'Junior Software Engineer',
+        'Grammarly':'Full-Stack Software Engineer',
         'Test Company': 'test job',
         
     }
@@ -115,6 +121,8 @@ def get_cover_letter_file_name(company):
         'Run As You Are':'Run Cover Letter.pdf',
         'Rally':'Rally Cover Letter.pdf',
         'Mechanical Orchard': 'Mechanical Cover Letter.pdf',
+        'Imperva':'Imperva Cover Letter.pdf',
+        'Grammarly':'Grammarly Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
@@ -291,6 +299,19 @@ def process_image():
         
         return str(e), 500
 
+@app.route('/api/scavenge-process-image', methods=['POST'])  
+def scavenge_process_image():
+
+    if 'imageFile' not in request.files:
+        return 'No file part', 500
+    
+    try:
+        imageFile = request.files['imageFile']
+        img  = cv2.imdecode(np.frombuffer(imageFile.read(), np.uint8), cv2.IMREAD_COLOR) 
+        landmark = predict_class(img)
+        return jsonify({'landmark': landmark})
+    except Exception as e:
+        return str(e), 500
 
 
 # Define the API route
