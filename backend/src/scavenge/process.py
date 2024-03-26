@@ -1,5 +1,5 @@
 import tensorflow as tf
-import scavenge_classes  # Importing the classes from config.py
+from .scavenge_classes import landmarks
 
 def predict_class(image_path):
     # Load the saved model
@@ -16,5 +16,5 @@ def predict_class(image_path):
     predicted_class_index = tf.argmax(predictions, axis=-1)
     predicted_class_index_value = predicted_class_index.numpy()[0]
 
-    predicted_class = scavenge_classes.landmarks[predicted_class_index_value]
+    predicted_class = landmarks[predicted_class_index_value]
     return predicted_class
