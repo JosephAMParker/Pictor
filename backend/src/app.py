@@ -43,6 +43,7 @@ def get_company_from_id(identifier):
         '5d689cc': 'BC Public Service',
         'a2ebe4d': 'Imperva',
         'a3b8219': 'Grammarly',
+        'f93f2b6': 'Floatplane Media',
         '1234567': 'Test Company', 
 
     }
@@ -93,6 +94,7 @@ def get_job_title(company):
         'BC Public Service':'ISL 24R - Full Stack Developer',
         'Imperva':'Junior Software Engineer',
         'Grammarly':'Full-Stack Software Engineer',
+        'Floatplane Media':'Jr. Back-End Developer',
         'Test Company': 'test job',
         
     }
@@ -123,6 +125,7 @@ def get_cover_letter_file_name(company):
         'Mechanical Orchard': 'Mechanical Cover Letter.pdf',
         'Imperva':'Imperva Cover Letter.pdf',
         'Grammarly':'Grammarly Cover Letter.pdf',
+        'Floatplane Media':'Floatplane Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
