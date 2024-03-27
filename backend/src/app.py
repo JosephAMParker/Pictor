@@ -44,6 +44,7 @@ def get_company_from_id(identifier):
         'a2ebe4d': 'Imperva',
         'a3b8219': 'Grammarly',
         'f93f2b6': 'Floatplane Media',
+        'af10ec5': 'VersaFile',
         '1234567': 'Test Company', 
 
     }
@@ -95,6 +96,7 @@ def get_job_title(company):
         'Imperva':'Junior Software Engineer',
         'Grammarly':'Full-Stack Software Engineer',
         'Floatplane Media':'Jr. Back-End Developer',
+        'VersaFile': 'Front End UI Developer',
         'Test Company': 'test job',
         
     }
@@ -126,6 +128,7 @@ def get_cover_letter_file_name(company):
         'Imperva':'Imperva Cover Letter.pdf',
         'Grammarly':'Grammarly Cover Letter.pdf',
         'Floatplane Media':'Floatplane Cover Letter.pdf',
+        'VersaFile':'VersaFile Cover Letter.pdf',
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
