@@ -45,6 +45,7 @@ def get_company_from_id(identifier):
         'a3b8219': 'Grammarly',
         'f93f2b6': 'Floatplane Media',
         'af10ec5': 'VersaFile',
+        'a3367b6': 'EvenUp',
         '1234567': 'Test Company', 
 
     }
@@ -97,6 +98,7 @@ def get_job_title(company):
         'Grammarly':'Full-Stack Software Engineer',
         'Floatplane Media':'Jr. Back-End Developer',
         'VersaFile': 'Front End UI Developer',
+        'EvenUp':'Frontend Software Engineer',
         'Test Company': 'test job',
         
     }
@@ -129,6 +131,7 @@ def get_cover_letter_file_name(company):
         'Grammarly':'Grammarly Cover Letter.pdf',
         'Floatplane Media':'Floatplane Cover Letter.pdf',
         'VersaFile':'VersaFile Cover Letter.pdf',
+        'EvenUp':'EvenUp Cover Letter.pdf'
     }
     return user_filename_mapping.get(company, 'none.pdf') 
 
@@ -316,9 +319,37 @@ def scavenge_process_image():
         img  = cv2.imdecode(np.frombuffer(imageFile.read(), np.uint8), cv2.IMREAD_COLOR) 
         landmark = predict_class(img)
         return jsonify({'landmark': landmark})
+    
     except Exception as e:
         return str(e), 500
 
+
+@app.route('/api/scavenge-save-image', methods=['POST'])  
+def scavenge_save_image():
+    if 'imageFile' not in request.files:
+        return 'No file part', 500
+    
+    try:
+
+        image_file = request.files['imageFile']
+        directory_name = request.form['directoryName'] 
+        
+        relative_directory_path = 'backend/public/train/' + directory_name  
+        
+        base_folder = os.getcwd()
+        directory_path = os.path.join(base_folder, relative_directory_path)
+
+        if not os.path.exists(directory_path):
+            os.makedirs(directory_path) 
+
+        idx = len(os.listdir(directory_path)) 
+        image_name = directory_name + '_' + str(idx) + '.jpg'
+        image_path = os.path.join(directory_path, image_name) 
+         
+        image_file.save(image_path)
+        return 'Image saved successfully', 200
+    except Exception as e:
+        return str(e), 500
 
 # Define the API route
 @app.route('/api/data', methods=['GET'])
