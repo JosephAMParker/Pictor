@@ -5,7 +5,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt 
 from keras import layers,models
 from flask import jsonify, request 
-from pictor.backend.src.scavenge.process import predict_class   
+from process import predict_class   
 
 def process_image():
 
