@@ -10,7 +10,7 @@ from flask_cors import CORS
 import pyppeteer
 from urllib.parse import urlparse
 
-from .scavenge.scavenge import save_image, process_image
+from scavenge.scavenge import save_image, process_image
 from pimage import PImage
 from pvideo import PVideo
 

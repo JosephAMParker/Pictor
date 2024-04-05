@@ -4,8 +4,8 @@ import numpy as np
 import tensorflow as tf 
 import matplotlib.pyplot as plt 
 from keras import layers,models
-from flask import jsonify, request 
-from process import predict_class   
+from flask import jsonify, request
+from .process import predict_class
 
 def process_image():
 
