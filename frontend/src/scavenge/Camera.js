@@ -15,14 +15,14 @@ import { useUserMedia } from "./hooks/use-user-media";
 
 const CAPTURE_OPTIONS = {
   audio: false,
-  video: { facingMode: "environment" }
+  video: { facingMode: "environment", width: 640, height: 640 } 
 };
 
 export function Camera({ onCapture, onClear }) {
   const canvasRef = useRef();
   const videoRef = useRef();
 
-  const [container, setContainer] = useState({ width: 0, height: 0 });
+  const [container, setContainer] = useState({ width: 0, height: 0, size: 0 });
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isCanvasEmpty, setIsCanvasEmpty] = useState(true);
   const [isFlashing, setIsFlashing] = useState(false);
@@ -41,10 +41,19 @@ export function Camera({ onCapture, onClear }) {
   }
 
   function handleResize(contentRect) {
-    setContainer({
-      width: contentRect.bounds.width,
-      height: Math.round(contentRect.bounds.width / aspectRatio)
-    });
+    if (contentRect.width > contentRect.height){
+      setContainer({
+        width: contentRect.bounds.height,
+        height: contentRect.bounds.height,
+        size: contentRect.bounds.height,
+      });
+    } else{
+      setContainer({
+        width: contentRect.bounds.width,
+        height: contentRect.bounds.width,
+        size: contentRect.bounds.width,
+      });
+    } 
   }
 
   function handleCanPlay() {
@@ -56,16 +65,21 @@ export function Camera({ onCapture, onClear }) {
   function handleCapture() {
     const context = canvasRef.current.getContext("2d");
 
+    const videoHeight = videoRef.current.videoHeight 
+    const videoWidth = videoRef.current.videoWidth 
+
+    const s = (videoWidth - videoHeight)/2
+
     context.drawImage(
       videoRef.current,
-      offsets.x,
-      offsets.y,
-      container.width,
-      container.height,
+      s,
+      0,
+      videoWidth - s*2,
+      videoHeight, 
       0,
       0,
-      container.width,
-      container.height
+      context.canvas.width,
+      context.canvas.height,
     );
 
     canvasRef.current.toBlob(blob => onCapture(blob), "image/jpeg", 1);
@@ -90,10 +104,10 @@ export function Camera({ onCapture, onClear }) {
         <Wrapper>
           <Container
             ref={measureRef}
-            maxHeight={videoRef.current && videoRef.current.videoHeight}
-            maxWidth={videoRef.current && videoRef.current.videoWidth}
+            maxheight={videoRef.current && videoRef.current.videoWidth}
+            maxwidth={videoRef.current && videoRef.current.videoWidth}
             style={{
-              height: `${container.height}px`
+              height: `${container.size}px`
             }}
           >
             <Video
@@ -102,19 +116,21 @@ export function Camera({ onCapture, onClear }) {
               onCanPlay={handleCanPlay}
               autoPlay
               playsInline
-              muted
+              muted  
               style={{
                 top: `-${offsets.y}px`,
-                left: `-${offsets.x}px`
-              }}
+                left: `-${offsets.x}px`, 
+                width: `${container.size}px`, // Set width to height to make it square
+                height: `${container.size}px` // Set height to container.height
+              }} 
             />
 
             <Overlay hidden={!isVideoPlaying} />
 
             <Canvas
               ref={canvasRef}
-              width={container.width}
-              height={container.height}
+              width={224}
+              height={224}
             />
 
             <Flash

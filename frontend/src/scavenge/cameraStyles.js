@@ -20,8 +20,8 @@ export const Wrapper = styled.div`
 export const Container = styled.div`
   position: relative;
   width: 100%;
-  max-width: ${({ maxWidth }) => maxWidth && `${maxWidth}px`};
-  max-height: ${({ maxHeight }) => maxHeight && `${maxHeight}px`};
+  max-width: ${({ maxwidth }) => maxwidth && `${maxwidth}px`};
+  max-height: ${({ maxheight }) => maxheight && `${maxheight}px`};
   overflow: hidden;
 `;
 
@@ -33,8 +33,8 @@ export const Canvas = styled.canvas`
   right: 0;
 `;
 
-export const Video = styled.video`
-  position: absolute;
+export const Video = styled.video` 
+  object-fit: cover;
 
   &::-webkit-media-controls-play-button {
     display: none !important;

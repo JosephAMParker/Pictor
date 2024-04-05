@@ -9,6 +9,7 @@ import Neowise from './pages/NeoWise';
 import SiteSmash from './pages/SiteSmash';
 import Luminet from './pages/Luminet'; 
 import ScavengePage from './pages/SavengePage';
+import TrainPage from './pages/TrainPage';
 
 export default function App() {
 
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="screen" element={<SiteSmash />} /> 
           <Route path="luminet" element={<Luminet />} />
           <Route path="scavenge" element={<ScavengePage/>} />
+          <Route path="train-scavenge" element={<TrainPage/>} />
         </Routes>
       </BrowserRouter>
     </>
