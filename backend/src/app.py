@@ -48,6 +48,7 @@ def get_company_from_id(identifier):
         'af10ec5': 'VersaFile',
         'a3367b6': 'EvenUp',
         'a864b80': 'BC Ministry of Finance',
+        'a3b8280': 'Amazon',
         '1234567': 'Test Company', 
 
     }
@@ -102,6 +103,7 @@ def get_job_title(company):
         'VersaFile': 'Front End UI Developer',
         'EvenUp':'Frontend Software Engineer',
         'BC Ministry of Finance':'ISL 24R - Intermediate Software Developer',
+        'Amazon':'Front-End Engineer II',
         'Test Company': 'test job',
         
     }
