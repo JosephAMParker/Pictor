@@ -11,6 +11,7 @@ import pyppeteer
 from urllib.parse import urlparse
 
 from scavenge.scavenge import save_image, process_image
+
 from pimage import PImage
 from pvideo import PVideo
 
@@ -49,6 +50,7 @@ def get_company_from_id(identifier):
         'a3367b6': 'EvenUp',
         'a864b80': 'BC Ministry of Finance',
         'a3b8280': 'Amazon',
+        'a234c83': 'Thale',
         '1234567': 'Test Company', 
 
     }
@@ -104,6 +106,7 @@ def get_job_title(company):
         'EvenUp':'Frontend Software Engineer',
         'BC Ministry of Finance':'ISL 24R - Intermediate Software Developer',
         'Amazon':'Front-End Engineer II',
+        'Thale':'Full Stack Developer',
         'Test Company': 'test job',
         
     }
