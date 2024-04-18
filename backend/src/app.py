@@ -51,6 +51,8 @@ def get_company_from_id(identifier):
         'a864b80': 'BC Ministry of Finance',
         'a3b8280': 'Amazon',
         'a234c83': 'Thale',
+        '4c9ec9a': 'Lime',
+        '14c4c2b': 'UVX Inc',
         '1234567': 'Test Company', 
 
     }
@@ -107,6 +109,8 @@ def get_job_title(company):
         'BC Ministry of Finance':'ISL 24R - Intermediate Software Developer',
         'Amazon':'Front-End Engineer II',
         'Thale':'Full Stack Developer',
+        'Lime':'Software Engineer',
+        'UVX Inc':'Frontend Developer',
         'Test Company': 'test job',
         
     }
