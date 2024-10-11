@@ -35,8 +35,7 @@ const Train: React.FC = () => {
   return (
     <Fragment>
       <Root>
-        {isCameraOpen && (<>
-          camera here
+        {isCameraOpen && (<> 
           <Camera
             onCapture={(blob: any) => handleCapture(blob)}
             onClear={() => setCardImage(undefined)}

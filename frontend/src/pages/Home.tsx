@@ -238,7 +238,7 @@ const Home = (props: HomeProps) => {
           jobTitle,
           setJobTitle } = props    
 
-  const resume_pdf = process.env.PUBLIC_URL + '/resume.pdf'
+  const resume_pdf = process.env.PUBLIC_URL + '/parker-resume.pdf'
 
   const [pdf, setPDF] = React.useState(resume_pdf)
   const [urlInput, setUrlInput] = React.useState('');
