@@ -56,7 +56,8 @@ def train():
 
     # Define image dimensions and batch size
     img_width, img_height = 224, 224
-    batch_size = 16
+    batch_size = 6
+    epochs=12
 
     # Create data generators for training and validation with data augmentation
     train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
@@ -110,7 +111,7 @@ def train():
     history = model.fit(
         train_generator,
         steps_per_epoch=train_generator.samples // batch_size,
-        epochs=10,
+        epochs=epochs,
         validation_data=val_generator,
         validation_steps=val_generator.samples // batch_size
     )

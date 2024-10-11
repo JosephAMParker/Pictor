@@ -1,1 +1,1 @@
-landmarks = ['lazyboy', 'shelf', 'tv']
+landmarks = ['Fan', 'Halloween', 'Malt', 'Tv']

@@ -1,14 +1,16 @@
+import os
 import tensorflow as tf
 from .scavenge_classes import landmarks
 
-def predict_class(image_path):
+def predict_class(image_data):
+
+    classifier = os.path.join(os.getcwd(), 'backend/public/landmark_classifier.h5')
     # Load the saved model
-    model = tf.keras.models.load_model('landmark_classifier.h5')
+    model = tf.keras.models.load_model(classifier)
 
     # Preprocess the new image (resize to 224x224 and rescale pixel values)
-    image = tf.keras.preprocessing.image.load_img(image_path, target_size=(224, 224))
-    image = tf.keras.preprocessing.image.img_to_array(image)
-    image = image / 255.0  # Rescale pixel values to [0, 1]
+    image = tf.image.resize(image_data, (224, 224))  # Resize the image
+    image = tf.cast(image, tf.float32) / 255.0  # Rescale pixel values to [0, 1]
     image = tf.expand_dims(image, axis=0)  # Add batch dimension
 
     # Make predictions on the new image
@@ -17,4 +19,5 @@ def predict_class(image_path):
     predicted_class_index_value = predicted_class_index.numpy()[0]
 
     predicted_class = landmarks[predicted_class_index_value]
+    print(predictions)
     return predicted_class
