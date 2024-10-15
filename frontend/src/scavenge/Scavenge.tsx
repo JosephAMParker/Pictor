@@ -89,7 +89,7 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
         handleResponse(
           response.data.clueID,
           response.data.answer,
-          response.data.wrong
+          response.data.wrong + " " + response.data.vals
         );
       })
       .finally(() => {

@@ -15,7 +15,7 @@ def process_image():
         imageFile = request.files["imageFile"]
         clueID = request.form["clueID"]
         img = cv2.imdecode(np.frombuffer(imageFile.read(), np.uint8), cv2.IMREAD_COLOR)
-        predict_id, answer = predict_class(img)
+        predict_id, answer, predictions = predict_class(img)
         predict_id_str = str(predict_id)
         if clueID == predict_id_str:
             return jsonify({"answer": answer, "clueID": predict_id_str})
@@ -24,6 +24,7 @@ def process_image():
                 "answer": "INCORRECT",
                 "clueID": predict_id_str,
                 "wrong": landmarks[predict_id],
+                "vals": "".join([str(e) for e in predictions]),
             }
         )
 

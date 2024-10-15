@@ -23,4 +23,4 @@ def predict_class(image_data):
 
     predicted_answer = answers[predicted_class_index_value]
     print(predictions)
-    return predicted_class_index_value, predicted_answer
+    return predicted_class_index_value, predicted_answer, predictions
