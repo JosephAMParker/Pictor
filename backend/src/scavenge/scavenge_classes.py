@@ -1,1 +1,2 @@
-landmarks = ['Fan', 'Halloween', 'Malt', 'Tv']
+landmarks = ["books", "la", "bees", "ghost"]
+answers = ["CO", "HE", "RE", "NT"]

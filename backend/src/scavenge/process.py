@@ -1,10 +1,11 @@
 import os
 import tensorflow as tf
-from .scavenge_classes import landmarks
+from .scavenge_classes import answers
+
 
 def predict_class(image_data):
 
-    classifier = os.path.join(os.getcwd(), 'backend/public/landmark_classifier.h5')
+    classifier = os.path.join(os.getcwd(), "scavenge/landmark_classifier.h5")
     # Load the saved model
     model = tf.keras.models.load_model(classifier)
 
@@ -18,6 +19,6 @@ def predict_class(image_data):
     predicted_class_index = tf.argmax(predictions, axis=-1)
     predicted_class_index_value = predicted_class_index.numpy()[0]
 
-    predicted_class = landmarks[predicted_class_index_value]
+    predicted_answer = answers[predicted_class_index_value]
     print(predictions)
-    return predicted_class
+    return predicted_class_index_value, predicted_answer

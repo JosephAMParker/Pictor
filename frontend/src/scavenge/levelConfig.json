@@ -1,0 +1,22 @@
+[
+  {
+    "id": "0",
+    "clue": "books between elephants",
+    "direction": "N"
+  },
+  {
+    "id": "1",
+    "clue": "LA",
+    "direction": "E"
+  },
+  {
+    "id": "2",
+    "clue": "bees",
+    "direction": "W"
+  },
+  {
+    "id": "3",
+    "clue": "ghost",
+    "direction": "S"
+  }
+]
