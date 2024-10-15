@@ -5,7 +5,9 @@ from .scavenge_classes import answers
 
 def predict_class(image_data):
 
-    classifier = os.path.join(os.getcwd(), "scavenge/landmark_classifier.h5")
+    classifier = os.path.join(
+        os.getcwd(), "backend/src/scavenge/landmark_classifier.h5"
+    )
     # Load the saved model
     model = tf.keras.models.load_model(classifier)
 
