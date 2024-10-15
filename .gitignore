@@ -45,3 +45,6 @@ desktop.ini
 **/office.pub
 
 **/landmark_classifier* 
+
+__pycache__/
+*.py[cod]
