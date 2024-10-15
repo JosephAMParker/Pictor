@@ -22,6 +22,7 @@
     "pixi.js": "^8.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
     "react-image-file-resizer": "^0.4.8",
     "react-measure": "^2.5.2",
     "react-pdf": "^7.7.0",
@@ -60,6 +61,7 @@
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
+    "@types/react-helmet": "^6.1.11",
     "@types/react-measure": "^2.0.12",
     "@types/three": "^0.161.2",
     "@types/webpack-env": "^1.18.4"
