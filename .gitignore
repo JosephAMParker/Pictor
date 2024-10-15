@@ -11,6 +11,17 @@ pids
 
 # Dependency directories
 node_modules/
+**/node_modules/
+
+venv/
+**/venv/
+.env/
+**/.env/
+.env*/
+**/.env*/
+backend/venv/
+
+**/trainModel/*
 
 # Optional: User-specific files
 .npmrc
@@ -30,3 +41,7 @@ desktop.ini
 # Optional: Visual Studio Code
 .vscode/
 
+**/office.pem
+**/office.pub
+
+**/landmark_classifier* 
