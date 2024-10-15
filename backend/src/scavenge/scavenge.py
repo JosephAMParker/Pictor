@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from flask import jsonify, request
 from .process import predict_class
+from .scavenge_classes import landmarks
 
 
 def process_image():
@@ -18,7 +19,13 @@ def process_image():
         predict_id_str = str(predict_id)
         if clueID == predict_id_str:
             return jsonify({"answer": answer, "clueID": predict_id_str})
-        return jsonify({"answer": "INCORRECT"})
+        return jsonify(
+            {
+                "answer": "INCORRECT",
+                "clueID": predict_id_str,
+                "wrong": landmarks[predict_id],
+            }
+        )
 
     except Exception as e:
         return str(e), 500

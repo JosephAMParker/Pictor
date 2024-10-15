@@ -46,6 +46,8 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
   const [answer, setAnswer] = useState<string>();
   const { id, clue, direction } = levelConfig[parseInt(clueID)];
 
+  const [wrongId, setWrongId] = useState("");
+
   React.useEffect(() => {
     const solvedClues = JSON.parse(localStorage.getItem("solvedClues") || "{}");
     if (solvedClues[id]) {
@@ -54,7 +56,11 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
     }
   }, [id]);
 
-  function handleResponse(fetchedID: string, fetchedAnswer: string) {
+  function handleResponse(
+    fetchedID: string,
+    fetchedAnswer: string,
+    wrong = ""
+  ) {
     if (fetchedID && fetchedID === id && fetchedAnswer !== "INCORRECT") {
       setLevelSolved(true);
       setTryAgain(false);
@@ -67,6 +73,7 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
       localStorage.setItem("solvedClues", JSON.stringify(solvedClues));
     } else {
       setTryAgain(true);
+      setWrongId(wrong);
     }
   }
 
@@ -79,7 +86,11 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
     axios
       .post(apiUrl + "/api/scavenge-process-image", formData)
       .then((response) => {
-        handleResponse(response.data.clueID, response.data.answer);
+        handleResponse(
+          response.data.clueID,
+          response.data.answer,
+          response.data.wrong
+        );
       })
       .finally(() => {
         setIsProcessing(false);
@@ -136,15 +147,14 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
             />
           </>
         )}
-
         {cardImage && answer && (
           <div>
             <h2>{answer}</h2>
             <Preview src={cardImage && URL.createObjectURL(cardImage)} />
           </div>
         )}
-
         {!isProcessing && cardImage && tryAgain && "No match! Try again!"}
+        {"i saw " + wrongId}
 
         <Footer>
           <button onClick={() => setIsCameraOpen(true)}>Open Camera</button>
