@@ -72,7 +72,7 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
     fetchedAnswer: string,
     wrong = ""
   ) {
-    if (fetchedID && fetchedID === id && fetchedAnswer !== "INCORRECT") {
+    if (fetchedID && fetchedID === "id" && fetchedAnswer !== "INCORRECT") {
       setLevelSolved(true);
       setTryAgain(false);
       setAnswer(fetchedAnswer);

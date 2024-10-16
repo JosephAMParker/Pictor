@@ -28,7 +28,14 @@ def process_image():
                 landmarks[int(clueID)],
                 "success_",
             )
-            return jsonify({"answer": answer, "clueID": predict_id_str})
+            return jsonify(
+                {
+                    "answer": answer,
+                    "clueID": predict_id_str,
+                    "wrong": landmarks[predict_id],
+                    "vals": "".join([str(e) for e in predictions]),
+                }
+            )
         save_to_directory(
             imageFile, "backend/public/attempts/", landmarks[int(clueID)], "fail_"
         )
