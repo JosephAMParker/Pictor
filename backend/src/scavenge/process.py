@@ -1,5 +1,6 @@
 import os
 import tensorflow as tf
+import numpy as np
 from .scavenge_classes import answers
 
 
@@ -16,9 +17,20 @@ def predict_class(image_data):
 
     # Make predictions on the new image
     predictions = model.predict(image)
+    print(predictions)
+
+    # Sort the predictions to compare the top two values
+    sorted_predictions = np.sort(
+        predictions[0]
+    )  # Sort the probabilities in ascending order
+
+    # Check if the highest prediction is at least twice the second-highest prediction
+    if sorted_predictions[-1] < 0.9:
+        return -1, "INCORRECT"
+
     predicted_class_index = tf.argmax(predictions, axis=-1)
     predicted_class_index_value = predicted_class_index.numpy()[0]
 
     predicted_answer = answers[predicted_class_index_value]
-    print(predictions)
-    return predicted_class_index_value, predicted_answer, predictions
+
+    return predicted_class_index_value, predicted_answer
