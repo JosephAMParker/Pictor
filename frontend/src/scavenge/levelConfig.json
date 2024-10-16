@@ -1,22 +1,22 @@
 [
   {
     "id": "0",
-    "clue": "books between elephants",
+    "clue": "3 books, 2 elephants",
     "direction": "N"
   },
   {
     "id": "1",
-    "clue": "LA",
+    "clue": "City in which the terminator first arrives",
     "direction": "E"
   },
   {
     "id": "2",
-    "clue": "bees",
+    "clue": "These guys helped the Vikings make their favorite drink",
     "direction": "W"
   },
   {
     "id": "3",
-    "clue": "ghost",
+    "clue": "guardian of the fridge",
     "direction": "S"
   }
 ]
