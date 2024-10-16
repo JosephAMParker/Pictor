@@ -44,7 +44,8 @@ desktop.ini
 **/office.pem
 **/office.pub
 
-**/landmark_classifier* 
+**/*.keras
+**/*.h5
 
 __pycache__/
 *.py[cod]
