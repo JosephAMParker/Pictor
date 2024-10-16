@@ -22,11 +22,14 @@ def process_image():
         predict_id_str = str(predict_id)
         if clueID == predict_id_str:
             save_to_directory(
-                imageFile, "backend/public/attempts/", landmarks[clueID], "success_"
+                imageFile,
+                "backend/public/attempts/",
+                landmarks[int(clueID)],
+                "success_",
             )
             return jsonify({"answer": answer, "clueID": predict_id_str})
         save_to_directory(
-            imageFile, "backend/public/attempts/", landmarks[clueID], "fail_"
+            imageFile, "backend/public/attempts/", landmarks[int(clueID)], "fail_"
         )
         return jsonify(
             {
