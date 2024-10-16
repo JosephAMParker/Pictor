@@ -68,7 +68,7 @@ def save_image():
         image_path = os.path.join(directory_path, image_name)
 
         image_file.save(image_path)
-        return "Image saved successfully", 200
+        return jsonify({"idx": str(idx)})
 
     except Exception as e:
         return str(e), 500
