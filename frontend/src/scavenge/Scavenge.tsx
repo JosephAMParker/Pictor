@@ -46,7 +46,7 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
   const [answer, setAnswer] = useState<string>();
   const { id, clue, direction } = levelConfig[parseInt(clueID)];
 
-  const [finalClue, setFinalClue] = useState("");
+  const [finalClue, setFinalClue] = useState(false);
   const [wrongId, setWrongId] = useState("");
 
   React.useEffect(() => {
@@ -63,31 +63,9 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
 
     // Check if there are 4 solved clues
     if (Object.keys(solvedClues).length === 4) {
-      // Concatenate the answers of the 4 solved clues
-      const sortedClueKeys = Object.keys(solvedClues).sort(
-        (a, b) => parseInt(a) - parseInt(b)
-      );
-
-      // Concatenate the answers in the correct order
-      const answer = sortedClueKeys.map((key) => solvedClues[key]).join("");
-
-      // Prepare formData
-      const formData = new FormData();
-      formData.append("answer", answer);
-
-      // Send a POST request to fetch the final clue
-      axios
-        .post(apiUrl + "/api/fetch-final-answer", formData)
-        .then((response) => {
-          // Update state with the final clue
-          setFinalClue(response.data.finalClue);
-        })
-        .catch((error) => {
-          console.error("Error fetching final clue:", error);
-          // Handle errors if needed
-        });
+      setFinalClue(true);
     }
-  }, [id, answer, levelSolved]);
+  }, [setFinalClue]);
 
   function handleResponse(
     fetchedID: string,
@@ -149,18 +127,9 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
           style={{ marginTop: "20px" }} // Optional margin for spacing
         >
           {finalClue
-            ? "All Levels Complete! Go Back for the Final Clue"
+            ? "All Levels Complete! Go Back to End the Game!"
             : "Go Back and Try Another Level"}
         </Button>
-      </CenteredContainer>
-    );
-  }
-
-  if (finalClue && finalClue !== "") {
-    return (
-      <CenteredContainer>
-        <SolvedText>CONGRATS!</SolvedText>
-        <ClueText>{finalClue}</ClueText>
       </CenteredContainer>
     );
   }
@@ -197,6 +166,7 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
             <Preview src={cardImage && URL.createObjectURL(cardImage)} />
           </div>
         )}
+
         {!isProcessing && cardImage && tryAgain && "No match! Try again!"}
         {"i saw " + wrongId}
 

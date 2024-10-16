@@ -1,8 +1,12 @@
 import * as React from "react";
 import { Link } from "react-router-dom"; // Ensure you have react-router-dom installed
-import { Button, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import levelConfig from "./levelConfig.json"; // Importing the JSON file directly
+import axios from "axios";
+import { apiUrl } from "../Constants";
+
+const NUMBER_OF_LEVELS = 4;
 
 const StyledButton = styled(Button)(({ theme }) => ({
   display: "block",
@@ -26,7 +30,28 @@ const StyledButton = styled(Button)(({ theme }) => ({
   },
 }));
 
+const CenteredContainer = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100vh", // Full viewport height for vertical centering
+});
+
+const SolvedText = styled(Typography)({
+  fontSize: "2rem", // Adjust size as needed
+  fontWeight: "bold", // Make it bold for emphasis
+  textAlign: "center",
+});
+
+const ClueText = styled(Typography)({
+  fontSize: "1.5rem", // Slightly smaller for the clue
+  textAlign: "center",
+});
+
 const LevelSelect: React.FC = () => {
+  const [finalClue, setFinalClue] = React.useState("");
+  const [gameSolved, setGameSolved] = React.useState("");
   // State to hold the solved clues
   const [solvedClues, setSolvedClues] = React.useState<{
     [key: string]: string;
@@ -34,9 +59,49 @@ const LevelSelect: React.FC = () => {
 
   // Load solvedClues from localStorage on component mount
   React.useEffect(() => {
-    const storedClues = JSON.parse(localStorage.getItem("solvedClues") || "{}");
-    setSolvedClues(storedClues);
+    const solvedClues = JSON.parse(localStorage.getItem("solvedClues") || "{}");
+    setSolvedClues(solvedClues);
+
+    // Check if there are 4 solved clues
+    if (Object.keys(solvedClues).length === NUMBER_OF_LEVELS) {
+      // Concatenate the answers of the 4 solved clues
+      const sortedClueKeys = Object.keys(solvedClues).sort(
+        (a, b) => parseInt(a) - parseInt(b)
+      );
+
+      // Concatenate the answers in the correct order
+      const answer = sortedClueKeys.map((key) => solvedClues[key]).join("");
+
+      setGameSolved(answer);
+    }
   }, []);
+
+  const endGame = () => {
+    // Prepare formData
+    const formData = new FormData();
+    formData.append("answer", gameSolved);
+
+    // Send a POST request to fetch the final clue
+    axios
+      .post(apiUrl + "/api/fetch-final-answer", formData)
+      .then((response) => {
+        // Update state with the final clue
+        setFinalClue(response.data.finalClue);
+      })
+      .catch((error) => {
+        console.error("Error fetching final clue:", error);
+        // Handle errors if needed
+      });
+  };
+
+  if (finalClue) {
+    return (
+      <CenteredContainer>
+        <SolvedText>CONGRATS!</SolvedText>
+        <ClueText>{finalClue}</ClueText>
+      </CenteredContainer>
+    );
+  }
 
   return (
     <Container
@@ -70,14 +135,18 @@ const LevelSelect: React.FC = () => {
           </div>
         );
       })}
-      <StyledButton
-        onClick={() => {
-          localStorage.removeItem("solvedClues"); // Removes solvedClues from localStorage
-          window.location.reload(); // Optionally reloads the page to reflect the reset
-        }}
-      >
-        RESET
-      </StyledButton>
+      {gameSolved && (
+        <>
+          <Typography>You found the secret word: {gameSolved}</Typography>
+          <StyledButton
+            onClick={() => {
+              endGame();
+            }}
+          >
+            SUMBIT ANSWER!
+          </StyledButton>
+        </>
+      )}
     </Container>
   );
 };
