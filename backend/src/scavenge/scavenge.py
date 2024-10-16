@@ -20,13 +20,14 @@ def process_image():
         img = cv2.imdecode(np.frombuffer(imageFile.read(), np.uint8), cv2.IMREAD_COLOR)
         predict_id, answer, predictions = predict_class(img)
         predict_id_str = str(predict_id)
-
         if clueID == predict_id_str:
             save_to_directory(
-                imageFile, "backend/public/attempts/", clueID + "_", "success_"
+                imageFile, "backend/public/attempts/", landmarks[clueID], "success_"
             )
             return jsonify({"answer": answer, "clueID": predict_id_str})
-        save_to_directory(imageFile, "backend/public/attempts/", clueID + "_", "fail_")
+        save_to_directory(
+            imageFile, "backend/public/attempts/", landmarks[clueID], "fail_"
+        )
         return jsonify(
             {
                 "answer": "INCORRECT",
