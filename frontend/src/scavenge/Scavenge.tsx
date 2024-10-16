@@ -67,12 +67,8 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
     }
   }, [setFinalClue]);
 
-  function handleResponse(
-    fetchedID: string,
-    fetchedAnswer: string,
-    wrong = ""
-  ) {
-    if (fetchedID && fetchedID === "id" && fetchedAnswer !== "INCORRECT") {
+  function handleResponse(fetchedID: string, fetchedAnswer: string) {
+    if (fetchedID && fetchedID === id && fetchedAnswer !== "INCORRECT") {
       setLevelSolved(true);
       setTryAgain(false);
       setAnswer(fetchedAnswer);
@@ -84,7 +80,6 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
       localStorage.setItem("solvedClues", JSON.stringify(solvedClues));
     } else {
       setTryAgain(true);
-      setWrongId(wrong);
     }
   }
 
@@ -97,11 +92,7 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
     axios
       .post(apiUrl + "/api/scavenge-process-image", formData)
       .then((response) => {
-        handleResponse(
-          response.data.clueID,
-          response.data.answer,
-          response.data.wrong + " " + response.data.vals
-        );
+        handleResponse(response.data.clueID, response.data.answer);
       })
       .finally(() => {
         setIsProcessing(false);
@@ -168,7 +159,6 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
         )}
 
         {!isProcessing && cardImage && tryAgain && "No match! Try again!"}
-        {"i saw " + wrongId}
 
         <Footer>
           <button onClick={() => setIsCameraOpen(true)}>Open Camera</button>

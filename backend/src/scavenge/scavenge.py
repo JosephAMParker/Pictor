@@ -19,7 +19,7 @@ def process_image():
         clueID = request.form["clueID"]
         img = cv2.imdecode(np.frombuffer(imageFile.read(), np.uint8), cv2.IMREAD_COLOR)
         imageFile.seek(0)
-        predict_id, answer, predictions = predict_class(img)
+        predict_id, answer = predict_class(img)
         predict_id_str = str(predict_id)
         if clueID == predict_id_str:
             save_to_directory(
@@ -28,25 +28,11 @@ def process_image():
                 landmarks[int(clueID)],
                 "success_",
             )
-            return jsonify(
-                {
-                    "answer": answer,
-                    "clueID": predict_id_str,
-                    "wrong": landmarks[predict_id],
-                    "vals": "".join([str(e) for e in predictions]),
-                }
-            )
+            return jsonify({"answer": answer, "clueID": predict_id_str})
         save_to_directory(
             imageFile, "backend/public/attempts/", landmarks[int(clueID)], "fail_"
         )
-        return jsonify(
-            {
-                "answer": "INCORRECT",
-                "clueID": predict_id_str,
-                "wrong": landmarks[predict_id],
-                "vals": "".join([str(e) for e in predictions]),
-            }
-        )
+        return jsonify({"answer": "INCORRECT"})
 
     except Exception as e:
         return str(e), 500
