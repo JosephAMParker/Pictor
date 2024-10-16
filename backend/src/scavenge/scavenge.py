@@ -18,6 +18,7 @@ def process_image():
         imageFile = request.files["imageFile"]
         clueID = request.form["clueID"]
         img = cv2.imdecode(np.frombuffer(imageFile.read(), np.uint8), cv2.IMREAD_COLOR)
+        imageFile.seek(0)
         predict_id, answer, predictions = predict_class(img)
         predict_id_str = str(predict_id)
         if clueID == predict_id_str:
