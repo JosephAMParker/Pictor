@@ -55,7 +55,7 @@ def save_image():
         image_file = request.files["imageFile"]
         directory_name = request.form["directoryName"]
 
-        relative_directory_path = "../public/train/" + directory_name
+        relative_directory_path = "backend/public/train/" + directory_name
 
         base_folder = os.getcwd()
         directory_path = os.path.join(base_folder, relative_directory_path)
