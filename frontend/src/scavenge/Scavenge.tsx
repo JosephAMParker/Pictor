@@ -46,6 +46,7 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
   const [answer, setAnswer] = useState<string>();
   const { id, clue, direction } = levelConfig[parseInt(clueID)];
 
+  const [finalClue, setFinalClue] = useState("");
   const [wrongId, setWrongId] = useState("");
 
   React.useEffect(() => {
@@ -55,6 +56,38 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
       setAnswer(solvedClues[id]);
     }
   }, [id]);
+
+  React.useEffect(() => {
+    // Retrieve solved clues from localStorage
+    const solvedClues = JSON.parse(localStorage.getItem("solvedClues") || "{}");
+
+    // Check if there are 4 solved clues
+    if (Object.keys(solvedClues).length === 4) {
+      // Concatenate the answers of the 4 solved clues
+      const sortedClueKeys = Object.keys(solvedClues).sort(
+        (a, b) => parseInt(a) - parseInt(b)
+      );
+
+      // Concatenate the answers in the correct order
+      const answer = sortedClueKeys.map((key) => solvedClues[key]).join("");
+
+      // Prepare formData
+      const formData = new FormData();
+      formData.append("answer", answer);
+
+      // Send a POST request to fetch the final clue
+      axios
+        .post(apiUrl + "/api/fetch-final-answer", formData)
+        .then((response) => {
+          // Update state with the final clue
+          setFinalClue(response.data.finalClue);
+        })
+        .catch((error) => {
+          console.error("Error fetching final clue:", error);
+          // Handle errors if needed
+        });
+    }
+  }, [id, answer, levelSolved]);
 
   function handleResponse(
     fetchedID: string,
@@ -115,8 +148,19 @@ const Scavenge: React.FC<ScavengeProps> = ({ clueID }) => {
           }}
           style={{ marginTop: "20px" }} // Optional margin for spacing
         >
-          Go Back and Try Another Level
+          {finalClue
+            ? "All Levels Complete! Go Back for the Final Clue"
+            : "Go Back and Try Another Level"}
         </Button>
+      </CenteredContainer>
+    );
+  }
+
+  if (finalClue && finalClue !== "") {
+    return (
+      <CenteredContainer>
+        <SolvedText>CONGRATS!</SolvedText>
+        <ClueText>{finalClue}</ClueText>
       </CenteredContainer>
     );
   }

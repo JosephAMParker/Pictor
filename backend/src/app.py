@@ -10,7 +10,7 @@ from flask_cors import CORS
 import pyppeteer
 from urllib.parse import urlparse
 
-from scavenge.scavenge import save_image, process_image
+from scavenge.scavenge import get_answer, save_image, process_image
 
 from pimage import PImage
 from pvideo import PVideo
@@ -426,6 +426,11 @@ def scavenge_process_image():
 @app.route("/api/scavenge-save-image", methods=["POST"])
 def scavenge_save_image():
     return save_image()
+
+
+@app.route("/api/fetch-final-answer", methods=["POST"])
+def scavenge_get_answer():
+    return get_answer()
 
 
 # Define the API route

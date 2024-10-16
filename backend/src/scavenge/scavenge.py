@@ -5,6 +5,9 @@ from flask import jsonify, request
 from .process import predict_class
 from .scavenge_classes import landmarks
 
+FINAL_ANSWER = "coherent"
+FINAL_CLUE = "Look inside the Red Rising board game box on the bookshelf"
+
 
 def process_image():
 
@@ -28,6 +31,18 @@ def process_image():
             }
         )
 
+    except Exception as e:
+        return str(e), 500
+
+
+def get_answer():
+
+    try:
+        answer = request.form["answer"]
+        answer = answer.lower()
+
+        if answer == FINAL_ANSWER:
+            return jsonify({"finalClue": FINAL_CLUE})
     except Exception as e:
         return str(e), 500
 
