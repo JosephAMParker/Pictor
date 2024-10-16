@@ -20,8 +20,13 @@ def process_image():
         img = cv2.imdecode(np.frombuffer(imageFile.read(), np.uint8), cv2.IMREAD_COLOR)
         predict_id, answer, predictions = predict_class(img)
         predict_id_str = str(predict_id)
+
         if clueID == predict_id_str:
+            save_to_directory(
+                imageFile, "backend/public/attempts/", clueID + "_", "success_"
+            )
             return jsonify({"answer": answer, "clueID": predict_id_str})
+        save_to_directory(imageFile, "backend/public/attempts/", clueID + "_", "fail_")
         return jsonify(
             {
                 "answer": "INCORRECT",
@@ -47,15 +52,9 @@ def get_answer():
         return str(e), 500
 
 
-def save_image():
-    if "imageFile" not in request.files:
-        return "No file part", 500
-
+def save_to_directory(image_file, folder, directory_name, pass_fail=""):
     try:
-        image_file = request.files["imageFile"]
-        directory_name = request.form["directoryName"]
-
-        relative_directory_path = "backend/public/train/" + directory_name
+        relative_directory_path = folder + directory_name
 
         base_folder = os.getcwd()
         directory_path = os.path.join(base_folder, relative_directory_path)
@@ -64,11 +63,25 @@ def save_image():
             os.makedirs(directory_path)
 
         idx = len(os.listdir(directory_path))
-        image_name = directory_name + "_" + str(idx) + ".jpg"
+        image_name = directory_name + "_" + pass_fail + str(idx) + ".jpg"
         image_path = os.path.join(directory_path, image_name)
 
         image_file.save(image_path)
         return jsonify({"idx": str(idx)})
+
+    except Exception as e:
+        return str(e), 500
+
+
+def save_image():
+    if "imageFile" not in request.files:
+        return "No file part", 500
+
+    try:
+        image_file = request.files["imageFile"]
+        directory_name = request.form["directoryName"]
+
+        return save_to_directory(image_file, "backend/public/train/", directory_name)
 
     except Exception as e:
         return str(e), 500
