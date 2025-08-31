@@ -5,7 +5,13 @@ import cv2
 import traceback
 
 import numpy as np
-from flask import jsonify, request, Flask, Response, send_file, send_from_directory
+from flask import (
+    jsonify,
+    request,
+    Flask,
+    Response,
+    send_file,
+)
 from flask_cors import CORS
 import pyppeteer
 from urllib.parse import urlparse
@@ -15,8 +21,60 @@ from scavenge.scavenge import get_answer, save_image, process_image
 from pimage import PImage
 from pvideo import PVideo
 
+from routes.auth import auth_bp
+from routes.book import book_bp
+from db import db
+
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+from flask_jwt_extended import JWTManager
+from models.user import User
+from models.book import Book
+from models.thread import Thread
+from models.comment import Comment
+from models.thread import ThreadAdmin
+from datetime import timedelta
+
 app = Flask(__name__)
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
+app.secret_key = "super-secret-key-please-change-this"
+cors = CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
+# Add your secret key
+app.config["JWT_SECRET_KEY"] = "your_jwt_secret_key"  # Change this to your secret key
+
+# Access token lives longer (e.g. 1 hour instead of default 15 minutes)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+
+# Refresh token expiry (e.g. 30 days)
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
+
+# Specify where to look for the token
+app.config["JWT_TOKEN_LOCATION"] = ["headers"]  # Can be 'headers', 'cookies', or 'json'
+
+# Initialize JWTManager
+jwt = JWTManager(app)
+# DB config
+basedir = os.path.abspath(os.path.dirname(__file__))
+db_path = os.path.join(basedir, "db.sqlite3")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + db_path
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Initialize DB and register blueprints
+db.init_app(app)
+app.register_blueprint(auth_bp, url_prefix="/auth")
+app.register_blueprint(book_bp, url_prefix="/bookclub")
+
+# Create Flask-Admin instance
+admin = Admin(
+    app, name="Bookclub Admin", template_mode="bootstrap4", url="/bookclub/admin"
+)
+
+# Register all models with default views
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Book, db.session))
+admin.add_view(ThreadAdmin(Thread, db.session))
+# admin.add_view(ModelView(Thread, db.session))
+admin.add_view(ModelView(Comment, db.session))
 
 
 def get_company_from_id(identifier):
@@ -445,8 +503,19 @@ def get_data():
     return Response(processed_image.tobytes(), mimetype="image/jpeg")
 
 
+is_first_request = True
+
+
+@app.before_request
+def create_tables():
+    global is_first_request
+    if is_first_request:
+        db.create_all()
+        is_first_request = False
+
+
 def main():
-    app.run()
+    app.run(debug=True)
 
 
 if __name__ == "__main__":
