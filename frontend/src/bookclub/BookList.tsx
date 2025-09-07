@@ -43,8 +43,8 @@ const BookList: React.FC = () => {
             >
               <CardMedia
                 component="img"
-                height="200"
-                image={`https://picsum.photos/200/300?random=${book.id}`} // Random image
+                height="600"
+                image={book.cover}
                 alt={book.title}
               />
               <CardContent>

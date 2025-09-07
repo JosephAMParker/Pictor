@@ -11,7 +11,7 @@ const BookView: React.FC = () => {
     isLoading,
     error,
   } = useGetThreadsQuery(Number(bookId)); // Fetch threads
-
+  console.log(threads);
   if (isLoading) {
     return <CircularProgress />;
   }

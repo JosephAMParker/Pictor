@@ -6,6 +6,7 @@ from models.thread import Thread
 from models.comment import Comment
 from db import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_socketio import emit
 
 book_bp = Blueprint("bookclub", __name__)
 from flask import Flask
@@ -88,7 +89,7 @@ def get_comments():
         {
             "id": comment.id,
             "body": comment.body,
-            "created_by": comment.user.username,
+            "created_by": comment.user.username if comment.user else "UnknownUser",
             "created_at": comment.created_at.isoformat(),
         }
         for comment in comments
@@ -97,7 +98,7 @@ def get_comments():
 
 
 @book_bp.route("/comments", methods=["POST"])
-@jwt_required()  # Ensure the user is authenticated
+@jwt_required()
 def create_comment():
     current_user_id = get_jwt_identity()
     data = request.get_json()
@@ -108,12 +109,10 @@ def create_comment():
     if not body or not thread_id:
         return jsonify({"message": "Missing required fields"}), 400
 
-    # Get the username of the user who is posting the comment
     user = User.query.get(current_user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # Create the comment
     new_comment = Comment(
         body=body,
         created_by=current_user_id,
@@ -123,17 +122,39 @@ def create_comment():
     db.session.add(new_comment)
     db.session.commit()
 
+    comment_payload = {
+        "id": new_comment.id,
+        "body": new_comment.body,
+        "created_by": user.username,
+        "created_at": new_comment.created_at.isoformat(),
+        "thread_id": thread_id,
+    }
+
+    # 🔥 Emit new comment to all connected clients listening for this thread
+    print("emitting", comment_payload)
+    emit("comment_added", comment_payload, to=str(thread_id), namespace="/")
+
     return (
         jsonify(
-            {
-                "message": "Comment created successfully",
-                "comment": {
-                    "id": new_comment.id,
-                    "body": new_comment.body,
-                    "created_by": new_comment.created_by,
-                    "created_at": new_comment.created_at.isoformat(),
-                },
-            }
+            {"message": "Comment created successfully", "comment": comment_payload}
         ),
         201,
     )
+
+
+@book_bp.route("/user", methods=["GET"])
+@jwt_required()
+def get_user():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # Convert user object to JSON-serializable dict
+    user_data = {
+        "id": user.id,
+        "username": user.username,
+        # add any other fields you want to expose
+    }
+
+    return jsonify(user_data)

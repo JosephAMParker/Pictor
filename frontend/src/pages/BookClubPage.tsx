@@ -1,7 +1,8 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import { useLoginMutation, useSignupMutation } from "../bookclub/auth";
+import { useLoginMutation, useSignupMutation } from "../bookclub/api/authApi";
+import { apiUrl } from "../Constants";
 
 const BookClubPage: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -12,18 +13,49 @@ const BookClubPage: React.FC = () => {
   const [login] = useLoginMutation();
   const [signup] = useSignupMutation();
 
-  // Check for existing token when the component mounts
+  // Attempt to refresh access token if missing or expired
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token && token !== "undefined") {
-      setIsLoggedIn(true);
-    }
+    const initAuth = async () => {
+      const accessToken = localStorage.getItem("access_token");
+      if (!accessToken) {
+        await refreshAccessToken();
+      } else {
+        setIsLoggedIn(true);
+      }
+    };
+
+    const refreshAccessToken = async (): Promise<void> => {
+      const refreshToken = localStorage.getItem("refresh_token");
+      if (!refreshToken) return;
+
+      try {
+        const res = await fetch(`${apiUrl}/auth/refresh`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${refreshToken}`,
+          },
+        });
+        if (!res.ok) throw new Error("Failed to refresh token");
+        const data = await res.json();
+        localStorage.setItem("access_token", data.access_token);
+        setIsLoggedIn(true);
+      } catch (err) {
+        console.error("Refresh failed", err);
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        setIsLoggedIn(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
   const handleLogin = async () => {
     try {
       const res = await login({ username, password }).unwrap();
-      localStorage.setItem("token", res.access_token);
+      localStorage.setItem("access_token", res.access_token);
+      localStorage.setItem("refresh_token", res.refresh_token);
       setIsLoggedIn(true);
     } catch (err: any) {
       setError(err.data?.error || "Login failed");
@@ -33,20 +65,21 @@ const BookClubPage: React.FC = () => {
   const handleSignup = async () => {
     try {
       const res = await signup({ username, password }).unwrap();
-      localStorage.setItem("token", res.access_token);
+      localStorage.setItem("access_token", res.access_token);
+      localStorage.setItem("refresh_token", res.refresh_token);
       setIsLoggedIn(true);
     } catch (err: any) {
       setError(err.data?.error || "Signup failed");
     }
   };
 
-  // const handleLogout = () => {
-  //   localStorage.removeItem("token");
-  //   setIsLoggedIn(false);
-  //   setUsername("");
-  //   setPassword("");
-  // };
-
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    setIsLoggedIn(false);
+    setUsername("");
+    setPassword("");
+  };
   if (!isLoggedIn) {
     return (
       <div style={{ padding: "2rem" }}>

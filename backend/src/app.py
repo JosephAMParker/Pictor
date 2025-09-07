@@ -21,6 +21,8 @@ from scavenge.scavenge import get_answer, save_image, process_image
 from pimage import PImage
 from pvideo import PVideo
 
+from sockets import socketio, register_socket_events
+
 from routes.auth import auth_bp
 from routes.book import book_bp
 from db import db
@@ -514,8 +516,12 @@ def create_tables():
         is_first_request = False
 
 
+register_socket_events(app)
+socketio.init_app(app)
+
+
 def main():
-    app.run(debug=True)
+    socketio.run(app, debug=True)  # swap app.run() for socketio.run()
 
 
 if __name__ == "__main__":
